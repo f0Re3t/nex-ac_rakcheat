@@ -7470,6 +7470,9 @@ public OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Fl
 					ac_uData[PR_roll][0] != ac_uData[PR_roll][0] ||
 					ac_uData[PR_roll][1] != ac_uData[PR_roll][1] ||
 					ac_uData[PR_roll][2] != ac_uData[PR_roll][2] ||
+					ac_uData[PR_roll][0] == ac_uData[PR_direction][0] ||
+					ac_uData[PR_roll][1] == ac_uData[PR_direction][1] ||
+					ac_uData[PR_roll][2] == ac_uData[PR_direction][2] ||
 					ac_uData[PR_direction][0] != ac_uData[PR_direction][0] ||
 					ac_uData[PR_direction][1] != ac_uData[PR_direction][1] ||
 					ac_uData[PR_direction][2] != ac_uData[PR_direction][2] ||
