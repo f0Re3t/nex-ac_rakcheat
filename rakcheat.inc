@@ -7370,11 +7370,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					if(ac_fData[PR_quaternion][0] != ac_fData[PR_quaternion][0] ||
 					ac_fData[PR_quaternion][1] != ac_fData[PR_quaternion][1] ||
 					ac_fData[PR_quaternion][2] != ac_fData[PR_quaternion][2] ||
-					ac_fData[PR_quaternion][3] != ac_fData[PR_quaternion][3] ||
-					floatabs(ac_fData[PR_quaternion][0]) > 1.0 ||
-					floatabs(ac_fData[PR_quaternion][1]) > 1.0 ||
-					floatabs(ac_fData[PR_quaternion][2]) > 1.0 ||
-					floatabs(ac_fData[PR_quaternion][3]) > 1.0) return 0;
+					ac_fData[PR_quaternion][3] != ac_fData[PR_quaternion][3]) return 0;
 					new Float:ac_zAngle, ac_gtc = GetTickCount(), ac_gpp = GetPlayerPing(playerid);
 					ac_zAngle = atan2(2.0 * ((ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][3]) + (ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][1])),
 					(ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][0]) - (ac_fData[PR_quaternion][1] * ac_fData[PR_quaternion][1]) - (ac_fData[PR_quaternion][2] *
@@ -7642,10 +7638,6 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					ac_cData[PR_quaternion][1] != ac_cData[PR_quaternion][1] ||
 					ac_cData[PR_quaternion][2] != ac_cData[PR_quaternion][2] ||
 					ac_cData[PR_quaternion][3] != ac_cData[PR_quaternion][3] ||
-					floatabs(ac_cData[PR_quaternion][0]) > 1.0 ||
-					floatabs(ac_cData[PR_quaternion][1]) > 1.0 ||
-					floatabs(ac_cData[PR_quaternion][2]) > 1.0 ||
-					floatabs(ac_cData[PR_quaternion][3]) > 1.0 ||
 					ac_cData[PR_vehicleHealth] != ac_cData[PR_vehicleHealth] ||
 					ac_cData[PR_vehicleHealth] == 0x7F800000 ||
 					ac_cData[PR_vehicleHealth] == 0xFF800000 ||
