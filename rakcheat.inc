@@ -5053,7 +5053,7 @@ public OnPlayerUpdate(playerid)
 						}
 						else if(ACInfo[playerid][acACAllow][2] && ac_gtc > ACInfo[playerid][acGtc][11] + ac_gpp)
 						{
-							if((ac_dist >= AC_MIN_STREAM_DISTANCE && (ac_a == INVALID_VEHICLE_ID || ac_a != INVALID_VEHICLE_ID && ACVehInfo[ac_a][acDriver] == INVALID_PLAYER_ID)) ||
+							if((ac_dist >= AC_MIN_STREAM_DISTANCE && (ac_a == INVALID_VEHICLE_ID || ACVehInfo[ac_a][acDriver] == INVALID_PLAYER_ID)) ||
 							(ac_dist >= AC_STREAM_DISTANCE && ac_a != INVALID_VEHICLE_ID && ACVehInfo[ac_a][acDriver] != INVALID_PLAYER_ID && ac_gtc > ACInfo[playerid][acGtc][17] + ac_gpp))
 							{
 								#if defined DEBUG
@@ -7407,8 +7407,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					ac_cData[PR_vehicleHealth] != ac_cData[PR_vehicleHealth] ||
 					ac_cData[PR_vehicleHealth] == 0x7F800000 ||
 					ac_cData[PR_vehicleHealth] == 0xFF800000 ||
-					ac_cData[PR_trainSpeed] != ac_cData[PR_trainSpeed] ||
-					floatabs(ac_cData[PR_trainSpeed]) > 3.5) return 0;
+					ac_cData[PR_trainSpeed] != ac_cData[PR_trainSpeed]) return 0;
 					new ac_gtc = GetTickCount();
 					if(ACInfo[playerid][acACAllow][44])
 					{
@@ -8242,7 +8241,7 @@ ac_fpublic ac_Timer(playerid)
 								printf("[Nex-AC debug] Dist: %f, dist set: %f, acSet[7]: %d, state: %d, old pos x, y: %f, %f",
 								ac_dist, ac_dist_set, ACInfo[playerid][acSet][7], ac_s, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY]);
 							#endif
-							ac_KickWithCode(playerid, "", 0, 53);
+							ac_KickWithCode(playerid, "", 0, 53, 2);
 						}
 					}
 					ACInfo[playerid][acLastFivePosX] = ACInfo[playerid][acLastPosX] = ac_pX;
