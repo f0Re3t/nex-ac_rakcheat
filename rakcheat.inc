@@ -4585,10 +4585,10 @@ public OnPlayerUpdate(playerid)
 									ac_vsp, ac_spDiff, ac_zAngle, ACVehInfo[ac_vehid][acZAngle], ac_vehid);
 								#endif
 								#if defined OnCheatDetected
-									ac_KickWithCode(playerid, "", 0, 25);
+									ac_KickWithCode(playerid, "", 0, 25, 1);
 									if(ACInfo[playerid][acKicked] > 0) return 0;
 								#else
-									return ac_KickWithCode(playerid, "", 0, 25);
+									return ac_KickWithCode(playerid, "", 0, 25, 1);
 								#endif
 							}
 							if(ac_IsAnAircraft(ac_i))
@@ -4660,10 +4660,10 @@ public OnPlayerUpdate(playerid)
 							if(ACInfo[playerid][acACAllow][24])
 							{
 								#if defined OnCheatDetected
-									ac_KickWithCode(playerid, "", 0, 24);
+									ac_KickWithCode(playerid, "", 0, 24, 1);
 									if(ACInfo[playerid][acKicked] > 0) return 0;
 								#else
-									return ac_KickWithCode(playerid, "", 0, 24);
+									return ac_KickWithCode(playerid, "", 0, 24, 1);
 								#endif
 							}
 						}
@@ -7438,15 +7438,15 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 								ac_zDiff);
 							#endif
 							#if defined OnCheatDetected
-								ac_KickWithCode(playerid, "", 0, 25, 2);
+								ac_KickWithCode(playerid, "", 0, 25, 3);
 								if(ACInfo[playerid][acKicked] > 0) return 0;
 								ACInfo[playerid][acCheatCount][10] = 0;
 							#else
-								return ac_KickWithCode(playerid, "", 0, 25, 2);
+								return ac_KickWithCode(playerid, "", 0, 25, 3);
 							#endif
 						}
 						#if defined OnCheatWarning
-							else OnCheatWarning(playerid, "", 0, 25, 2, ACInfo[playerid][acCheatCount][10]);
+							else OnCheatWarning(playerid, "", 0, 25, 3, ACInfo[playerid][acCheatCount][10]);
 						#endif
 					}
 					else ACInfo[playerid][acCheatCount][10] = 0;
@@ -7502,10 +7502,10 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 								ac_aData[PR_camMode]);
 							#endif
 							#if defined OnCheatDetected
-								ac_KickWithCode(playerid, "", 0, 47, 6);
+								ac_KickWithCode(playerid, "", 0, 47, 7);
 								if(ACInfo[playerid][acKicked] > 0) return 0;
 							#else
-								return ac_KickWithCode(playerid, "", 0, 47, 6);
+								return ac_KickWithCode(playerid, "", 0, 47, 7);
 							#endif
 						}
 						else
@@ -7519,10 +7519,10 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 										ac_aData[PR_camMode]);
 									#endif
 									#if defined OnCheatDetected
-										ac_KickWithCode(playerid, "", 0, 47, 7);
+										ac_KickWithCode(playerid, "", 0, 47, 8);
 										if(ACInfo[playerid][acKicked] > 0) return 0;
 									#else
-										return ac_KickWithCode(playerid, "", 0, 47, 7);
+										return ac_KickWithCode(playerid, "", 0, 47, 8);
 									#endif
 								}
 							}
@@ -7585,15 +7585,15 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 								ac_fData[PR_quaternion][0], ac_fData[PR_quaternion][1], ac_fData[PR_quaternion][2], ac_fData[PR_quaternion][3], ac_zAngle);
 							#endif
 							#if defined OnCheatDetected
-								ac_KickWithCode(playerid, "", 0, 25, 1);
+								ac_KickWithCode(playerid, "", 0, 25, 2);
 								if(ACInfo[playerid][acKicked] > 0) return 0;
 								ACInfo[playerid][acCheatCount][10] = 0;
 							#else
-								return ac_KickWithCode(playerid, "", 0, 25, 1);
+								return ac_KickWithCode(playerid, "", 0, 25, 2);
 							#endif
 						}
 						#if defined OnCheatWarning
-							else OnCheatWarning(playerid, "", 0, 25, 1, ACInfo[playerid][acCheatCount][10]);
+							else OnCheatWarning(playerid, "", 0, 25, 2, ACInfo[playerid][acCheatCount][10]);
 						#endif
 					}
 					else ACInfo[playerid][acCheatCount][10] = 0;
@@ -7820,10 +7820,10 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 								ac_fData[PR_animationFlags]);
 							#endif
 							#if defined OnCheatDetected
-								ac_KickWithCode(playerid, "", 0, 24, 1);
+								ac_KickWithCode(playerid, "", 0, 24, 2);
 								if(ACInfo[playerid][acKicked] > 0) return 0;
 							#else
-								return ac_KickWithCode(playerid, "", 0, 24, 1);
+								return ac_KickWithCode(playerid, "", 0, 24, 2);
 							#endif
 						}
 					}
