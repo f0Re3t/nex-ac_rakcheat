@@ -1,5 +1,5 @@
 //Nex-AC by Nexius v1.9.52 (0.3.7)
-//Modification rakcheat by f0Re3t v2.0.1
+//Modification rakcheat by f0Re3t v2.0.2
 
 #if defined _nex_ac_included
 	#endinput
@@ -28,7 +28,7 @@
 #endif
 
 #define	NEX_AC_VERSION				"1.9.52"
-#define	RAKCHEAT_MODULE_VERSION		"2.0.1"
+#define	RAKCHEAT_MODULE_VERSION		"2.0.2"
 
 #define AC_SERVER_VERSION			"0.3.7"
 #define AC_SERVER_DL_VERSION		"0.3.DL"
@@ -7691,15 +7691,17 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 											ac_zAngle = floatsqroot(floatpower(ac_fData[PR_position][0] - ac_x, 2.0) + floatpower(ac_fData[PR_position][1] - ac_y, 2.0) +
 											floatpower(ac_fData[PR_position][2] - ac_z, 2.0));
 										#endif
-										if(ac_zAngle >= 50.0 && ac_gtc > ACVehInfo[ac_fData[PR_surfingVehicleId]][acGtc][1] + ac_gpp &&
+										new Float:ac_maxdist = 50.0 + floatround(ACVehInfo[ac_fData[PR_surfingVehicleId]][acSpeed] / 5);
+										if(ac_IsATrainLoco(ac_model) || ac_IsATrainCarriage(ac_model) || ac_IsATrainPart(ac_model)) ac_maxdist += 80.0;
+										if(ac_zAngle >= ac_maxdist && ac_gtc > ACVehInfo[ac_fData[PR_surfingVehicleId]][acGtc][1] + ac_gpp &&
 										ACVehInfo[ac_fData[PR_surfingVehicleId]][acPosZ] > -95.0)
 										{
 											if(++ACInfo[playerid][acCheatCount][22] > AC_MAX_STREAMSURF_WARNINGS)
 											{
 												#undef AC_MAX_STREAMSURF_WARNINGS
 												#if defined DEBUG
-													printf("[Nex-AC debug] [ID_PLAYER_SYNC] Veh x, y, z: %f, %f, %f, player x, y, z: %f, %f, %f, distance: %f",
-													ac_x, ac_y, ac_z, ac_fData[PR_position][0], ac_fData[PR_position][1], ac_fData[PR_position][2], ac_zAngle);
+													printf("[Nex-AC debug] [ID_PLAYER_SYNC] Veh x, y, z: %f, %f, %f, player x, y, z: %f, %f, %f, distance: %f, max distance: %f",
+													ac_x, ac_y, ac_z, ac_fData[PR_position][0], ac_fData[PR_position][1], ac_fData[PR_position][2], ac_zAngle, ac_maxdist);
 												#endif
 												#if defined OnCheatDetected
 													ac_KickWithCode(playerid, "", 0, 2, 9);
@@ -8234,12 +8236,13 @@ ac_fpublic ac_Timer(playerid)
 						Float:ac_dist = GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], ac_pZ),
 						Float:ac_dist_set = GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acSetPosX], ACInfo[playerid][acSetPosY], ac_pZ);
 						if((ac_time = (ac_gtc - ACInfo[playerid][acFiveSecTick]) / 5000.0) > 1.0) ac_maxdist *= ac_time;
+						if(ac_s != PLAYER_STATE_ONFOOT) ac_maxdist += floatround(ACVehInfo[ACInfo[playerid][acVeh]][acSpeed] / 5);
 						if(ac_dist >= ac_maxdist && (ACInfo[playerid][acSet][7] == -1 || ac_dist_set >= ac_maxdist))
 						{
 							#undef AC_STREAM_DISTANCE
 							#if defined DEBUG
-								printf("[Nex-AC debug] Dist: %f, dist set: %f, acSet[7]: %d, state: %d, old pos x, y: %f, %f",
-								ac_dist, ac_dist_set, ACInfo[playerid][acSet][7], ac_s, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY]);
+								printf("[Nex-AC debug] Dist: %f, dist set: %f, acSet[7]: %d, state: %d, old pos x, y: %f, %f, max dist: %f",
+								ac_dist, ac_dist_set, ACInfo[playerid][acSet][7], ac_s, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], ac_maxdist);
 							#endif
 							ac_KickWithCode(playerid, "", 0, 53, 2);
 						}
