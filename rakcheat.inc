@@ -1,5 +1,5 @@
 //Nex-AC by Nexius v1.9.52 (0.3.7)
-//Modification rakcheat by f0Re3t v2.0.2
+//Modification rakcheat by f0Re3t v2.0.3
 
 #if defined _nex_ac_included
 	#endinput
@@ -28,7 +28,7 @@
 #endif
 
 #define	NEX_AC_VERSION				"1.9.52"
-#define	RAKCHEAT_MODULE_VERSION		"2.0.2"
+#define	RAKCHEAT_MODULE_VERSION		"2.0.3"
 
 #define AC_SERVER_VERSION			"0.3.7"
 #define AC_SERVER_DL_VERSION		"0.3.DL"
@@ -5725,10 +5725,15 @@ public OnPlayerStateChange(playerid, newstate, oldstate)
 				{
 					GetPlayerPos(playerid, ACInfo[playerid][acPosX], ACInfo[playerid][acPosY], ACInfo[playerid][acPosZ]);
 					new Float:ac_dist = GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], ACInfo[playerid][acPosZ]);
-					if(ac_dist < AC_STREAM_DISTANCE)
+					if(ACInfo[playerid][acACAllow][53] && ac_dist < AC_STREAM_DISTANCE)
 					{
 						ACInfo[playerid][acLastPosX] = ACInfo[playerid][acLastFivePosX] = ACInfo[playerid][acPosX];
 						ACInfo[playerid][acLastPosY] = ACInfo[playerid][acLastFivePosY] = ACInfo[playerid][acPosY];
+					}
+					else
+					{
+						ACInfo[playerid][acLastPosX] = ACInfo[playerid][acPosX];
+						ACInfo[playerid][acLastPosY] = ACInfo[playerid][acPosY];
 					}
 				}
 			}
@@ -7692,8 +7697,8 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 											floatpower(ac_fData[PR_position][2] - ac_z, 2.0));
 										#endif
 										new Float:ac_maxdist = 50.0 + floatround(ACVehInfo[ac_fData[PR_surfingVehicleId]][acSpeed] / 5);
-										if(ac_IsATrainLoco(ac_model) || ac_IsATrainCarriage(ac_model) || ac_IsATrainPart(ac_model)) ac_maxdist += 80.0;
-										if(ac_zAngle >= ac_maxdist && ac_gtc > ACVehInfo[ac_fData[PR_surfingVehicleId]][acGtc][1] + ac_gpp &&
+										if(ac_IsATrainPart(ac_model)) ac_maxdist += 80.0;
+										if(((ac_zAngle >= ac_maxdist && ACVehInfo[ac_fData[PR_surfingVehicleId]][acDriver] == INVALID_PLAYER_ID) || (ac_zAngle >= AC_STREAM_DISTANCE && ACVehInfo[ac_fData[PR_surfingVehicleId]][acDriver] != INVALID_PLAYER_ID)) && ac_gtc > ACVehInfo[ac_fData[PR_surfingVehicleId]][acGtc][1] + ac_gpp &&
 										ACVehInfo[ac_fData[PR_surfingVehicleId]][acPosZ] > -95.0)
 										{
 											if(++ACInfo[playerid][acCheatCount][22] > AC_MAX_STREAMSURF_WARNINGS)
