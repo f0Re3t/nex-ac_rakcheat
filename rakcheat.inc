@@ -1,5 +1,6 @@
 //Nex-AC by Nexius v1.9.52 (0.3.7)
-//Modification rakcheat by f0Re3t v2.0.3
+//Modification rakcheat by f0Re3t v2.0.4
+//Public edition
 
 #if defined _nex_ac_included
 	#endinput
@@ -28,7 +29,7 @@
 #endif
 
 #define	NEX_AC_VERSION				"1.9.52"
-#define	RAKCHEAT_MODULE_VERSION		"2.0.3"
+#define	RAKCHEAT_MODULE_VERSION		"2.0.4"
 
 #define AC_SERVER_VERSION			"0.3.7"
 #define AC_SERVER_DL_VERSION		"0.3.DL"
@@ -2959,6 +2960,7 @@ public OnGameModeInit()
 	printf(LOADED_MSG_2, NEX_AC_VERSION);
 	print(LOADED_MSG_3);
 	printf(" Modification rakcheat by f0Re3t v%s", RAKCHEAT_MODULE_VERSION);
+	print(" Public edition");
 	print("--------------------------------------\n");
 	#if defined ac_OnGameModeInit
 		new ac_a = ac_OnGameModeInit();
@@ -8242,6 +8244,7 @@ ac_fpublic ac_Timer(playerid)
 						Float:ac_dist_set = GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acSetPosX], ACInfo[playerid][acSetPosY], ac_pZ);
 						if((ac_time = (ac_gtc - ACInfo[playerid][acFiveSecTick]) / 5000.0) > 1.0) ac_maxdist *= ac_time;
 						if(ac_s != PLAYER_STATE_ONFOOT) ac_maxdist += floatround(ACVehInfo[ACInfo[playerid][acVeh]][acSpeed] / 5);
+						else if((ac_t = GetPlayerSurfingVehicleID(playerid)) != INVALID_VEHICLE_ID) ac_maxdist += floatround(ACVehInfo[ac_t][acSpeed] / 5);
 						if(ac_dist >= ac_maxdist && (ACInfo[playerid][acSet][7] == -1 || ac_dist_set >= ac_maxdist))
 						{
 							#undef AC_STREAM_DISTANCE
