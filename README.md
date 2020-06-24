@@ -1,2 +1,1 @@
-# Nex-AC with module "rakcheat"
-Это античит, основанный на античите Nex-AC и моей разработке rakcheat. Из данной версии вырезаны некоторые особенности Nex-AC, а так же добавлены все защиты из rakcheat и другие. Весь код, находящийся в rakcheat, был оптимизирован и доработан.
+# Rakcheat Anticheat (Based on Nex-AC)
