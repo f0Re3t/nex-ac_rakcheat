@@ -1,5 +1,5 @@
 //Nex-AC by Nexius v1.9.53 (0.3.7)
-//Modification rakcheat by f0Re3t v2.0.5
+//Modification rakcheat by f0Re3t v2.0.6
 
 #if defined _nex_ac_included
 	#endinput
@@ -28,7 +28,7 @@
 #endif
 
 #define	NEX_AC_VERSION				"1.9.53"
-#define	RAKCHEAT_MODULE_VERSION		"2.0.5"
+#define	RAKCHEAT_MODULE_VERSION		"2.0.6"
 
 #define AC_SERVER_VERSION			"0.3.7"
 #define AC_SERVER_DL_VERSION		"0.3.DL"
@@ -830,9 +830,9 @@ enum acInfo
 	Float:acSetPosY,
 	Float:acSetPosZ,
 	Float:acQuaternion,
-	acPackages,
 	acLastPackages,
 	acPackagesTime,
+	acPackages,
 	acSpeed,
 	acHealth,
 	acArmour,
@@ -1422,7 +1422,6 @@ ac_fpublic ac_SpawnPlayer(playerid)
 	ACInfo[playerid][acSpawnRes]++;
 	ACInfo[playerid][acSpawnTick] = ACInfo[playerid][acNOPCount][9] = 0;
 	ACInfo[playerid][acGtc][12] = GetTickCount() + 2650;
-	ACInfo[playerid][acVelZ] = 0.0;
 	return 1;
 }
 
@@ -1691,7 +1690,6 @@ ac_fpublic ac_SetVehiclePos(vehicleid, Float:ac_x, Float:ac_y, Float:ac_z)
 	{
 		if(ac_driver != INVALID_PLAYER_ID && GetPlayerSurfingVehicleID(ac_i) == vehicleid && ac_gtc < ACInfo[ac_i][acUpdateTick] + 1500)
 		{
-			ACInfo[ac_i][acGtc][20] = ac_gtc + 2650;
 			ACInfo[ac_i][acSet][7] = 5;
 			ACInfo[ac_i][acTpToZ] = false;
 			ACInfo[ac_i][acNOPCount][10] = 0;
@@ -1700,6 +1698,7 @@ ac_fpublic ac_SetVehiclePos(vehicleid, Float:ac_x, Float:ac_y, Float:ac_z)
 			ACInfo[ac_i][acSetPosZ] = ac_z;
 			ACInfo[ac_i][acSetPosTick] =
 			ACInfo[ac_i][acGtc][10] = ac_gtc + 3850;
+			ACInfo[ac_i][acGtc][20] = ac_gtc + 2650;
 			#if defined FreezeSyncPacket
 				if(!ACInfo[ac_i][acUnFrozen]) FreezeSyncPacket(ac_i, E_ALL_SYNC, false);
 			#endif
@@ -1903,7 +1902,7 @@ ac_fpublic ac_EnableAntiCheat(code, enable)
 			ACInfo[ac_i][acACAllow][code] = ac_ACAllow[code];
 			switch(code)
 			{
-				case 7: ACInfo[ac_i][acCheatCount][13] = ACInfo[ac_i][acCheatCount][26] = 0;
+				case 7: ACInfo[ac_i][acCheatCount][26] = ACInfo[ac_i][acCheatCount][13] = 0;
 				case 9: ACInfo[ac_i][acCheatCount][15] = 0;
 				case 10: ACInfo[ac_i][acCheatCount][18] = ACInfo[ac_i][acCheatCount][14] = 0;
 				#if AC_USE_AMMUNATIONS
@@ -1999,7 +1998,7 @@ ac_fpublic ac_EnableAntiCheatForPlayer(playerid, code, enable)
 	{
 		switch(code)
 		{
-			case 7: ACInfo[playerid][acCheatCount][13] = ACInfo[playerid][acCheatCount][26] = 0;
+			case 7: ACInfo[playerid][acCheatCount][26] = ACInfo[playerid][acCheatCount][13] = 0;
 			case 9: ACInfo[playerid][acCheatCount][15] = 0;
 			case 10: ACInfo[playerid][acCheatCount][18] = ACInfo[playerid][acCheatCount][14] = 0;
 			#if AC_USE_AMMUNATIONS
@@ -3685,6 +3684,7 @@ public OnPlayerConnect(playerid)
 		ACInfo[playerid][acIntEnterExits] = ac_IntEnterExits;
 		ACInfo[playerid][acStuntBonus] = ac_StuntBonus;
 		ACInfo[playerid][acCheatCount][0] =
+		ACInfo[playerid][acCheatCount][25] =
 		ACInfo[playerid][acHoldWeapon] =
 		ACInfo[playerid][acSpawnRes] =
 		ACInfo[playerid][acMoney] =
@@ -3692,9 +3692,7 @@ public OnPlayerConnect(playerid)
 		ACInfo[playerid][acPackages] =
 		ACInfo[playerid][acLastPackages] =
 		ACInfo[playerid][acPackagesTime] =
-		ACInfo[playerid][acInt] =
-		ACInfo[playerid][acCheatCount][25] =
-		ACInfo[playerid][acCheatCount][26] = 0;
+		ACInfo[playerid][acInt] = 0;
 		ACInfo[playerid][acSet][11] =
 		ACInfo[playerid][acSet][10] =
 		ACInfo[playerid][acSet][0] =
@@ -3703,7 +3701,6 @@ public OnPlayerConnect(playerid)
 		ACInfo[playerid][acDropJpX] =
 		ACInfo[playerid][acDropJpY] =
 		ACInfo[playerid][acDropJpZ] = 25000.0;
-		ACInfo[playerid][acVelZ] = 0.0;
 		for(ac_i = 12; ac_i >= 0; --ac_i)
 		{
 			ACInfo[playerid][acSetWeapon][ac_i] = -1;
@@ -3880,6 +3877,7 @@ public OnPlayerSpawn(playerid)
 		ACInfo[playerid][acCheatCount][14] =
 		ACInfo[playerid][acCheatCount][16] =
 		ACInfo[playerid][acCheatCount][18] =
+		ACInfo[playerid][acCheatCount][26] =
 		ACInfo[playerid][acLastSpecAct] =
 		ACInfo[playerid][acHoldWeapon] =
 		ACInfo[playerid][acParachute] =
@@ -3890,9 +3888,9 @@ public OnPlayerSpawn(playerid)
 		ACInfo[playerid][acIntRet] =
 		ACInfo[playerid][acSpeed] =
 		ACInfo[playerid][acVeh] = 0;
+		ACInfo[playerid][acVelZ] = 0.0;
 		ACInfo[playerid][acSetPosTick] = ac_gtc + 2650;
 		ACInfo[playerid][acGtc][6] = ac_gtc + 1650;
-		ACInfo[playerid][acVelZ] = 0.0;
 		if(ac_IsValidWeapon(ACInfo[playerid][acSpawnWeapon1]))
 		{
 			ac_i = ac_wSlot[ACInfo[playerid][acSpawnWeapon1]];
@@ -5689,7 +5687,6 @@ public OnPlayerUpdate(playerid)
 						}
 						ACInfo[playerid][acLastSpecAct] = ACInfo[playerid][acSpecAct];
 					}
-					ACInfo[playerid][acVelZ] = ac_vZ;
 					ac_a = GetPlayerSurfingVehicleID(playerid);
 					if(!IsVehicleStreamedIn(ac_a, playerid) && GetPlayerSurfingObjectID(playerid) == INVALID_OBJECT_ID)
 					{
@@ -5813,6 +5810,7 @@ public OnPlayerUpdate(playerid)
 								}
 							}
 							ACInfo[playerid][acSpeed] = ac_s;
+							ACInfo[playerid][acVelZ] = ac_vZ;
 						}
 					}
 					else
@@ -5846,8 +5844,8 @@ public OnPlayerUpdate(playerid)
 						}
 						if(ACInfo[playerid][acACAllow][2] && ac_gtc > ACInfo[playerid][acGtc][10] + ac_gpp)
 						{
-							if((ac_dist >= AC_MIN_STREAM_DISTANCE && (ac_a == INVALID_VEHICLE_ID || ACVehInfo[ac_a][acDriver] == INVALID_PLAYER_ID)) ||
-							(ac_dist >= AC_STREAM_DISTANCE && ac_a != INVALID_VEHICLE_ID && ACVehInfo[ac_a][acDriver] != INVALID_PLAYER_ID && ac_gtc > ACInfo[playerid][acGtc][20] + ac_gpp))
+							if(ac_dist >= AC_MIN_STREAM_DISTANCE && (ac_a == INVALID_VEHICLE_ID || ACVehInfo[ac_a][acDriver] == INVALID_PLAYER_ID) ||
+							ac_dist >= AC_STREAM_DISTANCE && ac_a != INVALID_VEHICLE_ID && ACVehInfo[ac_a][acDriver] != INVALID_PLAYER_ID && ac_gtc > ACInfo[playerid][acGtc][20] + ac_gpp)
 							{
 								#undef AC_MIN_STREAM_DISTANCE
 								#if defined DEBUG
@@ -5863,6 +5861,7 @@ public OnPlayerUpdate(playerid)
 							}
 						}
 						ACInfo[playerid][acSpeed] = ac_s;
+						ACInfo[playerid][acVelZ] = ac_vZ;
 					}
 					ACInfo[playerid][acAnim] = ac_sa;
 				}
@@ -6501,6 +6500,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate)
 					}
 				}
 				GetPlayerVelocity(playerid, ac_x, ac_y, ac_z);
+				ACInfo[playerid][acVelZ] = ac_z;
 				ACInfo[playerid][acSpeed] = ac_GetSpeed(ac_x, ac_y, ac_z);
 				if(ACInfo[playerid][acSet][7] == 3) ACInfo[playerid][acSet][7] = -1;
 				ACInfo[playerid][acGtc][15] = ACInfo[playerid][acGtc][9] = ac_i + 1650;
@@ -6534,6 +6534,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate)
 					}
 				}
 				GetPlayerVelocity(playerid, ac_x, ac_y, ac_z);
+				ACInfo[playerid][acVelZ] = ac_z;
 				ACInfo[playerid][acSpeed] = ac_GetSpeed(ac_x, ac_y, ac_z);
 				ACInfo[playerid][acGtc][15] = ACInfo[playerid][acGtc][9] = ac_i + 1650;
 			}
@@ -6565,7 +6566,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate)
 						ACInfo[playerid][acLastFivePosY] = ACInfo[playerid][acPosY];
 					}
 				}
-				ACInfo[playerid][acVelZ] = 0.0;
 			}
 			case PLAYER_STATE_DRIVER, PLAYER_STATE_PASSENGER:
 			{
@@ -8287,14 +8287,13 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 		{
 			case 200:
 			{
-				new ac_cData[PR_InCarSync], ac_gtc = GetTickCount();
+				new ac_cData[PR_InCarSync];
 				BS_IgnoreBits(bs, 8);
 				BS_ReadInCarSync(bs, ac_cData);
 				if(ac_cData[PR_quaternion][0] != ac_cData[PR_quaternion][0] ||
 				ac_cData[PR_quaternion][1] != ac_cData[PR_quaternion][1] ||
 				ac_cData[PR_quaternion][2] != ac_cData[PR_quaternion][2] ||
-				ac_cData[PR_quaternion][3] != ac_cData[PR_quaternion][3] ||
-				ac_cData[PR_trainSpeed] != ac_cData[PR_trainSpeed]) return 0;
+				ac_cData[PR_quaternion][3] != ac_cData[PR_quaternion][3]) return 0;
 				if(ACInfo[playerid][acACAllow][44] && !(1 <= ac_cData[PR_vehicleId] < MAX_VEHICLES))
 				{
 					#if defined DEBUG
@@ -8310,15 +8309,15 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				new Float:ac_zDiff, Float:ac_zAngle = atan2(2.0 * ((ac_cData[PR_quaternion][2] * ac_cData[PR_quaternion][3]) + (ac_cData[PR_quaternion][0] * ac_cData[PR_quaternion][1])),
 				(ac_cData[PR_quaternion][0] * ac_cData[PR_quaternion][0]) - (ac_cData[PR_quaternion][1] * ac_cData[PR_quaternion][1]) - (ac_cData[PR_quaternion][2] *
 				ac_cData[PR_quaternion][2]) + (ac_cData[PR_quaternion][3] * ac_cData[PR_quaternion][3]));
-				if(ACInfo[playerid][acACAllow][25] && (ac_zDiff = floatabs(ac_zAngle - ACInfo[playerid][acQuaternion])) > 90.0 && ac_gtc > ACInfo[playerid][acGtc][19] + GetPlayerPing(playerid))
+				if(ACInfo[playerid][acACAllow][25] && (ac_zDiff = floatabs(ac_zAngle - ACInfo[playerid][acQuaternion])) > 90.0 &&
+				GetTickCount() > ACInfo[playerid][acGtc][19] + GetPlayerPing(playerid))
 				{
 					if(++ACInfo[playerid][acCheatCount][22] > AC_MAX_VEHQUATERN_WARNINGS)
 					{
 						#undef AC_MAX_VEHQUATERN_WARNINGS
 						#if defined DEBUG
 							printf("[Nex-AC debug] Quaternion w, x, y, z: %f, %f, %f, %f, last angle: %f, diff angle: %f",
-							ac_cData[PR_quaternion][0], ac_cData[PR_quaternion][1], ac_cData[PR_quaternion][2], ac_cData[PR_quaternion][3], ACInfo[playerid][acQuaternion],
-							ac_zDiff);
+							ac_cData[PR_quaternion][0], ac_cData[PR_quaternion][1], ac_cData[PR_quaternion][2], ac_cData[PR_quaternion][3], ACInfo[playerid][acQuaternion], ac_zDiff);
 						#endif
 						#if defined OnCheatDetected
 							ac_KickWithCode(playerid, "", 0, 25, 2);
@@ -8333,12 +8332,10 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					#endif
 				}
 				else ACInfo[playerid][acCheatCount][22] = 0;
-				ACInfo[playerid][acQuaternion] = ac_zAngle;
-				if(ACInfo[playerid][acACAllow][3] && (ac_cData[PR_trailerId] != 0 && GetVehicleModel(ac_cData[PR_trailerId]) <= 0))
+				if(ACInfo[playerid][acACAllow][3] && ac_cData[PR_trailerId] != 0 && GetVehicleModel(ac_cData[PR_trailerId]) <= 0)
 				{
 					#if defined DEBUG
-						printf("[Nex-AC debug] Trailerid: %d, vehicleid: %d",
-						ac_cData[PR_trailerId], ac_cData[PR_vehicleId]);
+						printf("[Nex-AC debug] Trailerid: %d, vehicleid: %d", ac_cData[PR_trailerId], ac_cData[PR_vehicleId]);
 					#endif
 					#if defined OnCheatDetected
 						ac_KickWithCode(playerid, "", 0, 3, 5);
@@ -8347,6 +8344,13 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						return ac_KickWithCode(playerid, "", 0, 3, 5);
 					#endif
 				}
+				if(ac_cData[PR_trainSpeed] != ac_cData[PR_trainSpeed])
+				{
+					ac_cData[PR_trainSpeed] = 0.0;
+					BS_SetWriteOffset(bs, 8);
+					BS_WriteInCarSync(bs, ac_cData);
+				}
+				ACInfo[playerid][acQuaternion] = ac_zAngle;
 				BS_ResetReadPointer(bs);
 			}
 			case 203:
@@ -8365,8 +8369,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					if(!(0 <= ac_aData[PR_camMode] <= 65))
 					{
 						#if defined DEBUG
-							printf("[Nex-AC debug] Cammode: %d",
-							ac_aData[PR_camMode]);
+							printf("[Nex-AC debug] Cammode: %d", ac_aData[PR_camMode]);
 						#endif
 						#if defined OnCheatDetected
 							ac_KickWithCode(playerid, "", 0, 47, 7);
@@ -8382,8 +8385,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 							case 0..2, 5, 6, 9..14, 17, 19..21, 23..45, 47..50, 52, 54, 60, 61, 65:
 							{
 								#if defined DEBUG
-									printf("[Nex-AC debug] Cammode: %d",
-									ac_aData[PR_camMode]);
+									printf("[Nex-AC debug] Cammode: %d", ac_aData[PR_camMode]);
 								#endif
 								#if defined OnCheatDetected
 									ac_KickWithCode(playerid, "", 0, 47, 7);
@@ -8420,7 +8422,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 			}
 			case 207:
 			{
-				new ac_fData[PR_OnFootSync], Float:ac_zAngle, ac_gtc = GetTickCount(), ac_gpp = GetPlayerPing(playerid);
+				new ac_fData[PR_OnFootSync];
 				BS_IgnoreBits(bs, 8);
 				BS_ReadOnFootSync(bs, ac_fData);
 				if(ac_fData[PR_surfingOffsets][0] != ac_fData[PR_surfingOffsets][0] ||
@@ -8446,9 +8448,9 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				ac_fData[PR_quaternion][1] != ac_fData[PR_quaternion][1] ||
 				ac_fData[PR_quaternion][2] != ac_fData[PR_quaternion][2] ||
 				ac_fData[PR_quaternion][3] != ac_fData[PR_quaternion][3]) return 0;
-				ac_zAngle = atan2(2.0 * ((ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][3]) + (ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][1])),
-				(ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][0]) - (ac_fData[PR_quaternion][1] * ac_fData[PR_quaternion][1]) - (ac_fData[PR_quaternion][2] *
-				ac_fData[PR_quaternion][2]) + (ac_fData[PR_quaternion][3] * ac_fData[PR_quaternion][3]));
+				new Float:ac_zAngle = atan2(2.0 * ((ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][3]) + (ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][1])),
+				(ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][0]) - (ac_fData[PR_quaternion][1] * ac_fData[PR_quaternion][1]) -
+				(ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][2]) + (ac_fData[PR_quaternion][3] * ac_fData[PR_quaternion][3]));
 				if(ACInfo[playerid][acACAllow][25] && (ac_zAngle = floatabs(ac_zAngle)) > 85.0 && ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE)
 				{
 					if(++ACInfo[playerid][acCheatCount][22] > AC_MAX_QUATERN_WARNINGS)
@@ -8474,38 +8476,36 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				if(ACInfo[playerid][acACAllow][7] && ACInfo[playerid][acSet][7] == -1)
 				{
 					new Float:ac_zDiff = ac_fData[PR_position][2] - ACInfo[playerid][acPosZ];
-					if((floatabs(ac_fData[PR_quaternion][1]) > 0.0 || floatabs(ac_fData[PR_quaternion][2]) > 0.0) && ACInfo[playerid][acHoldWeapon] != WEAPON_PARACHUTE)
+					if((floatabs(ac_fData[PR_quaternion][1]) > 0.0 || floatabs(ac_fData[PR_quaternion][2]) > 0.0) &&
+					ACInfo[playerid][acHoldWeapon] != WEAPON_PARACHUTE && ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE &&
+					ACInfo[playerid][acEnterVeh] == 0)
 					{
-						if(ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE && ACInfo[playerid][acEnterVeh] == 0)
+						if(ac_fData[PR_animationId] != 1130 && ac_fData[PR_animationId] != 1132)
 						{
-							if(ac_fData[PR_animationId] != 1130 && ac_fData[PR_animationId] != 1132)
-							{
-								#if defined DEBUG
-									printf("[Nex-AC debug] Quaternion x, y: %f, %f, weaponid: %d, spec act: %d, anim: %d",
-									ac_fData[PR_quaternion][1], ac_fData[PR_quaternion][2], ACInfo[playerid][acHoldWeapon], ac_fData[PR_specialAction],
-									ac_fData[PR_animationId]);
-								#endif
-								#if defined OnCheatDetected
-									ac_KickWithCode(playerid, "", 0, 7, 4);
-									if(ACInfo[playerid][acKicked] > 0) return 0;
-								#else
-									return ac_KickWithCode(playerid, "", 0, 7, 4);
-								#endif
-							}
-							else if(ac_zDiff >= 1.0)
-							{
-								#if defined DEBUG
-									printf("[Nex-AC debug] Quaternion x, y: %f, %f, weaponid: %d, spec act: %d, anim: %d, pos z: %f, last pos z: %f, pos diff: %f",
-									ac_fData[PR_quaternion][1], ac_fData[PR_quaternion][2], ac_fData[PR_weaponId], ac_fData[PR_specialAction],
-									ac_fData[PR_animationId], ac_fData[PR_position][2], ACInfo[playerid][acPosZ], ac_zAngle);
-								#endif
-								#if defined OnCheatDetected
-									ac_KickWithCode(playerid, "", 0, 7, 4);
-									if(ACInfo[playerid][acKicked] > 0) return 0;
-								#else
-									return ac_KickWithCode(playerid, "", 0, 7, 4);
-								#endif
-							}
+							#if defined DEBUG
+								printf("[Nex-AC debug] Quaternion x, y: %f, %f, weaponid: %d, spec act: %d, anim: %d",
+								ac_fData[PR_quaternion][1], ac_fData[PR_quaternion][2], ACInfo[playerid][acHoldWeapon], ac_fData[PR_specialAction], ac_fData[PR_animationId]);
+							#endif
+							#if defined OnCheatDetected
+								ac_KickWithCode(playerid, "", 0, 7, 4);
+								if(ACInfo[playerid][acKicked] > 0) return 0;
+							#else
+								return ac_KickWithCode(playerid, "", 0, 7, 4);
+							#endif
+						}
+						else if(ac_zDiff >= 1.0)
+						{
+							#if defined DEBUG
+								printf("[Nex-AC debug] Quaternion x, y: %f, %f, weaponid: %d, spec act: %d, anim: %d, pos z: %f, last pos z: %f, pos diff: %f",
+								ac_fData[PR_quaternion][1], ac_fData[PR_quaternion][2], ac_fData[PR_weaponId], ac_fData[PR_specialAction],
+								ac_fData[PR_animationId], ac_fData[PR_position][2], ACInfo[playerid][acPosZ], ac_zAngle);
+							#endif
+							#if defined OnCheatDetected
+								ac_KickWithCode(playerid, "", 0, 7, 4);
+								if(ACInfo[playerid][acKicked] > 0) return 0;
+							#else
+								return ac_KickWithCode(playerid, "", 0, 7, 4);
+							#endif
 						}
 					}
 					#if defined VectorSize
@@ -8513,8 +8513,8 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					#else
 						ac_zAngle = floatsqroot(floatpower(ac_fData[PR_position][0] - ACInfo[playerid][acPosX], 2.0) + floatpower(ac_fData[PR_position][1] - ACInfo[playerid][acPosY], 2.0));
 					#endif
-					if(ac_zAngle >= 1.0 && ac_fData[PR_surfingVehicleId] == 0 && ((ac_fData[PR_velocity][2] > 0.0 && ac_zDiff <= -2.0 || ac_fData[PR_velocity][2] < 0.0 && ac_zDiff >= 2.0) ||
-					((ac_fData[PR_animationId] == 1130 || ac_fData[PR_animationId] == 1132) && ac_zDiff >= 2.0) || (ac_zDiff == 0.0 && ac_fData[PR_velocity][2] != 0.0 && ac_fData[PR_velocity][2] >= ACInfo[playerid][acVelZ])))
+					if(ac_zAngle >= 1.0 && ac_fData[PR_surfingVehicleId] == 0 && (ac_fData[PR_velocity][2] > 0.0 && ac_zDiff <= -2.0 || ac_fData[PR_velocity][2] < 0.0 && ac_zDiff >= 2.0 ||
+					(ac_fData[PR_animationId] == 1130 || ac_fData[PR_animationId] == 1132) && ac_zDiff >= 2.0 || ac_zDiff == 0.0 && ac_fData[PR_velocity][2] != 0.0 && ac_fData[PR_velocity][2] >= ACInfo[playerid][acVelZ]))
 					{
 						ACInfo[playerid][acCheatCount][26] += (1 * AC_FLYHACK_RESET_DELAY);
 						if(ACInfo[playerid][acCheatCount][26] > AC_MAX_FLYHACK_WARNINGS)
@@ -8543,12 +8543,11 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					new ac_t = ac_fData[PR_surfingVehicleId];
 					if(0 < ac_t < MAX_VEHICLES)
 					{
-						new ac_model = GetVehicleModel(ac_t);
+						new ac_model = GetVehicleModel(ac_t), ac_gtc = GetTickCount(), ac_gpp = GetPlayerPing(playerid);
 						if(ac_model == 0 && ac_gtc > ACVehInfo[ac_t][acGtc][0] + ac_gpp)
 						{
 							#if defined DEBUG
-								printf("[Nex-AC debug] Veh model: %d, vehicleid: %d",
-								ac_model, ac_t);
+								printf("[Nex-AC debug] Veh model: %d, vehicleid: %d", ac_model, ac_t);
 							#endif
 							#if defined OnCheatDetected
 								ac_KickWithCode(playerid, "", 0, 2, 8);
@@ -8594,8 +8593,8 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 								#endif
 								new Float:ac_maxdist = 50.0 + floatround(ACVehInfo[ac_t][acSpeed] / 5);
 								if(ac_IsATrainPartEx(ac_model)) ac_maxdist += 80.0;
-								if(((ac_zAngle >= ac_maxdist && ACVehInfo[ac_t][acDriver] == INVALID_PLAYER_ID) || (ac_zAngle >= AC_STREAM_DISTANCE && ACVehInfo[ac_t][acDriver] != INVALID_PLAYER_ID)) && ac_gtc > ACVehInfo[ac_t][acGtc][1] + ac_gpp &&
-								ACVehInfo[ac_t][acPosZ] > -95.0)
+								if((ac_zAngle >= ac_maxdist && ACVehInfo[ac_t][acDriver] == INVALID_PLAYER_ID || ac_zAngle >= AC_STREAM_DISTANCE && ACVehInfo[ac_t][acDriver] != INVALID_PLAYER_ID)
+								&& ac_gtc > ACVehInfo[ac_t][acGtc][1] + ac_gpp && ACVehInfo[ac_t][acPosZ] > -95.0)
 								{
 									if(++ACInfo[playerid][acCheatCount][24] > AC_MAX_STREAMSURF_WARNINGS)
 									{
@@ -8628,8 +8627,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						if(!ac_tmp && !IsValidPlayerObject(playerid, ac_t))
 						{
 							#if defined DEBUG
-								printf("[Nex-AC debug] Object: %d",
-								ac_t);
+								printf("[Nex-AC debug] Object: %d", ac_t);
 							#endif
 							#if defined OnCheatDetected
 								ac_KickWithCode(playerid, "", 0, 2, 11);
@@ -8703,8 +8701,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					else
 					{
 						#if defined DEBUG
-							printf("[Nex-AC debug] Surfing: %d",
-							ac_t);
+							printf("[Nex-AC debug] Surfing: %d", ac_t);
 						#endif
 						#if defined OnCheatDetected
 							ac_KickWithCode(playerid, "", 0, 2, 14);
@@ -8717,8 +8714,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				if(ACInfo[playerid][acACAllow][24] && ac_fData[PR_animationFlags] == 0)
 				{
 					#if defined DEBUG
-						printf("[Nex-AC debug] Animation flags: %d",
-						ac_fData[PR_animationFlags]);
+						printf("[Nex-AC debug] Animation flags: %d", ac_fData[PR_animationFlags]);
 					#endif
 					#if defined OnCheatDetected
 						ac_KickWithCode(playerid, "", 0, 24, 2);
@@ -8745,6 +8741,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				ac_uData[PR_angularVelocity][0] != ac_uData[PR_angularVelocity][0] ||
 				ac_uData[PR_angularVelocity][1] != ac_uData[PR_angularVelocity][1] ||
 				ac_uData[PR_angularVelocity][2] != ac_uData[PR_angularVelocity][2] ||
+				ac_uData[PR_vehicleHealth] != ac_uData[PR_vehicleHealth] ||
 				floatabs(ac_uData[PR_roll][0]) >= 1.0 ||
 				floatabs(ac_uData[PR_roll][1]) >= 1.0 ||
 				floatabs(ac_uData[PR_roll][2]) >= 1.0 ||
@@ -8754,10 +8751,9 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				floatabs(ac_uData[PR_angularVelocity][0]) >= 1.0 ||
 				floatabs(ac_uData[PR_angularVelocity][1]) >= 1.0 ||
 				floatabs(ac_uData[PR_angularVelocity][2]) >= 1.0 ||
-				(ac_uData[PR_roll][0] == ac_uData[PR_direction][0] &&
+				ac_uData[PR_roll][0] == ac_uData[PR_direction][0] &&
 				ac_uData[PR_roll][1] == ac_uData[PR_direction][1] &&
-				ac_uData[PR_roll][2] == ac_uData[PR_direction][2]) ||
-				ac_uData[PR_vehicleHealth] != ac_uData[PR_vehicleHealth]) return 0;
+				ac_uData[PR_roll][2] == ac_uData[PR_direction][2]) return 0;
 				BS_ResetReadPointer(bs);
 			}
 			case 210:
@@ -9320,8 +9316,8 @@ ac_fpublic ac_Timer(playerid)
 						#endif
 						#undef AC_PACKAGES_RESET_DELAY
 					}
-					ACInfo[playerid][acLastPackages] = ACInfo[playerid][acPackages];
 					ACInfo[playerid][acPackages] = 0;
+					ACInfo[playerid][acLastPackages] = ACInfo[playerid][acPackages];
 					ACInfo[playerid][acPackagesTime] = ac_gtc;
 				}
 			}
