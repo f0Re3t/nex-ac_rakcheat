@@ -148,8 +148,8 @@
 	#define AC_SPEEDHACK_VEH_RESET_DELAY	3		//In seconds
 #endif
 
-#if !defined AC_PACKAGES_RESET_DELAY
-	#define AC_PACKAGES_RESET_DELAY			3		//In seconds
+#if !defined AC_PACKETS_RESET_DELAY
+	#define AC_PACKETS_RESET_DELAY			3		//In seconds
 #endif
 
 #if !defined AC_FLYHACK_RESET_DELAY
@@ -248,24 +248,24 @@
 	#define AC_MAX_QUATERN_WARNINGS			1
 #endif
 
+#if !defined AC_MAX_QUATERN_VEH_WARNINGS
+	#define AC_MAX_QUATERN_VEH_WARNINGS		4
+#endif
+
 #if !defined AC_MAX_SURF_WARNINGS
 	#define AC_MAX_SURF_WARNINGS			30
 #endif
 
-#if !defined AC_MAX_DISTSURF_WARNINGS
-	#define AC_MAX_DISTSURF_WARNINGS		30
+#if !defined AC_MAX_DIST_SURF_WARNINGS
+	#define AC_MAX_DIST_SURF_WARNINGS		30
 #endif
 
-#if !defined AC_MAX_VEHQUATERN_WARNINGS
-	#define AC_MAX_VEHQUATERN_WARNINGS		4
+#if !defined AC_MAX_STREAM_SURF_WARNINGS
+	#define AC_MAX_STREAM_SURF_WARNINGS		15
 #endif
 
-#if !defined AC_MAX_STREAMSURF_WARNINGS
-	#define AC_MAX_STREAMSURF_WARNINGS		15
-#endif
-
-#if !defined AC_MAX_PACKAGES_WARNINGS
-	#define AC_MAX_PACKAGES_WARNINGS		(1 * AC_PACKAGES_RESET_DELAY)
+#if !defined AC_MAX_PACKETS_WARNINGS
+	#define AC_MAX_PACKETS_WARNINGS			(1 * AC_PACKETS_RESET_DELAY)
 #endif
 
 #define ac_fpublic%0(%1) forward%0(%1); public%0(%1)
@@ -830,9 +830,9 @@ enum acInfo
 	Float:acSetPosY,
 	Float:acSetPosZ,
 	Float:acQuaternion,
-	acLastPackages,
-	acPackagesTime,
-	acPackages,
+	acLastPackets,
+	acPacketsTick,
+	acPackets,
 	acSpeed,
 	acHealth,
 	acArmour,
@@ -1177,36 +1177,38 @@ ac_fpublic ac_CreatePickup(pickupid, modelid, type, Float:ac_X, Float:ac_Y, Floa
 	#define GetPlayerVersion ac_GetPlayerVersion
 #endif
 
-stock ac_GetPlayerFacingAngle(playerid, &Float:ang)
-{
-	if(!GetPlayerFacingAngle(playerid, ang)) return 0;
-	if(ang != ang) ang = 0.0;
-	ang = ac_AbsoluteAngle(ang);
-	return 1;
-}
+#if !defined PAWNRAKNET_INC_
+	stock ac_GetPlayerFacingAngle(playerid, &Float:ang)
+	{
+		if(!GetPlayerFacingAngle(playerid, ang)) return 0;
+		if(ang != ang) ang = 0.0;
+		ang = ac_AbsoluteAngle(ang);
+		return 1;
+	}
 
-#if defined _ALS_GetPlayerFacingAngle
-	#undef GetPlayerFacingAngle
-#else
-	#define _ALS_GetPlayerFacingAngle
+	#if defined _ALS_GetPlayerFacingAngle
+		#undef GetPlayerFacingAngle
+	#else
+		#define _ALS_GetPlayerFacingAngle
+	#endif
+	#define GetPlayerFacingAngle ac_GetPlayerFacingAngle
+
+	stock ac_GetVehicleZAngle(vehicleid, &Float:z_angle)
+	{
+		if(!GetVehicleZAngle(vehicleid, z_angle)) return 0;
+		if(z_angle != z_angle) z_angle = 0.0;
+		z_angle = ac_AbsoluteAngle(z_angle);
+		#undef ac_AbsoluteAngle
+		return 1;
+	}
+
+	#if defined _ALS_GetVehicleZAngle
+		#undef GetVehicleZAngle
+	#else
+		#define _ALS_GetVehicleZAngle
+	#endif
+	#define GetVehicleZAngle ac_GetVehicleZAngle
 #endif
-#define GetPlayerFacingAngle ac_GetPlayerFacingAngle
-
-stock ac_GetVehicleZAngle(vehicleid, &Float:z_angle)
-{
-	if(!GetVehicleZAngle(vehicleid, z_angle)) return 0;
-	if(z_angle != z_angle) z_angle = 0.0;
-	z_angle = ac_AbsoluteAngle(z_angle);
-	#undef ac_AbsoluteAngle
-	return 1;
-}
-
-#if defined _ALS_GetVehicleZAngle
-	#undef GetVehicleZAngle
-#else
-	#define _ALS_GetVehicleZAngle
-#endif
-#define GetVehicleZAngle ac_GetVehicleZAngle
 
 ac_fpublic ac_DestroyVehicle(vehicleid)
 {
@@ -3689,9 +3691,9 @@ public OnPlayerConnect(playerid)
 		ACInfo[playerid][acSpawnRes] =
 		ACInfo[playerid][acMoney] =
 		ACInfo[playerid][acAnim] =
-		ACInfo[playerid][acPackages] =
-		ACInfo[playerid][acLastPackages] =
-		ACInfo[playerid][acPackagesTime] =
+		ACInfo[playerid][acPackets] =
+		ACInfo[playerid][acLastPackets] =
+		ACInfo[playerid][acPacketsTick] =
 		ACInfo[playerid][acInt] = 0;
 		ACInfo[playerid][acSet][11] =
 		ACInfo[playerid][acSet][10] =
@@ -5815,53 +5817,54 @@ public OnPlayerUpdate(playerid)
 					}
 					else
 					{
-						if(ACInfo[playerid][acACAllow][9] && ac_a != INVALID_VEHICLE_ID && ac_gtc - ACInfo[playerid][acGtc][9] > ac_gpp)
+						if(ACInfo[playerid][acACAllow][2] && ac_gtc - ACInfo[playerid][acGtc][10] > ac_gpp &&
+						(ac_dist >= AC_MIN_STREAM_DISTANCE && (ac_a == INVALID_VEHICLE_ID || ACVehInfo[ac_a][acDriver] == INVALID_PLAYER_ID) ||
+						ac_dist >= AC_STREAM_DISTANCE && ac_a != INVALID_VEHICLE_ID && ACVehInfo[ac_a][acDriver] != INVALID_PLAYER_ID && ac_gtc - ACInfo[playerid][acGtc][20] > ac_gpp))
 						{
-							GetVehicleVelocity(ac_a, ac_vX, ac_vY, ac_vZ);
-							new ac_vsp = ac_GetSpeed(ac_vX, ac_vY, ac_vZ);
-							if(ac_s - ac_vsp > 230)
+							#undef AC_MIN_STREAM_DISTANCE
+							#if defined DEBUG
+								printf("[Nex-AC debug] Dist: %f, dist set: %f, speed: %d, pos x, y, z: %f, %f, %f, surfing veh: %d",
+								ac_dist, ac_dist_set, ac_s, ACInfo[playerid][acPosX], ACInfo[playerid][acPosY], ACInfo[playerid][acPosZ], ac_a);
+							#endif
+							#if defined OnCheatDetected
+								ac_KickWithCode(playerid, "", 0, 2, 7);
+								if(ACInfo[playerid][acKicked] > 0) return 0;
+							#else
+								return ac_KickWithCode(playerid, "", 0, 2, 7);
+							#endif
+						}
+						if(ac_gtc - ACInfo[playerid][acGtc][9] > ac_gpp)
+						{
+							if(ACInfo[playerid][acACAllow][9] && ac_a != INVALID_VEHICLE_ID)
 							{
-								if(++ACInfo[playerid][acCheatCount][15] > AC_MAX_SPEEDHACK_WARNINGS)
+								GetVehicleVelocity(ac_a, ac_vX, ac_vY, ac_vZ);
+								new ac_vsp = ac_GetSpeed(ac_vX, ac_vY, ac_vZ);
+								if(ac_s - ac_vsp > 230)
 								{
-									#undef AC_MAX_SPEEDHACK_WARNINGS
-									#if defined DEBUG
-										printf("[Nex-AC debug] Speed: %d, old speed: %d, veh speed: %d",
-										ac_s, ACInfo[playerid][acSpeed], ac_vsp);
-									#endif
-									#if defined OnCheatDetected
-										ac_KickWithCode(playerid, "", 0, 9, 3);
-										if(ACInfo[playerid][acKicked] > 0) return 0;
-										ACInfo[playerid][acCheatCount][15] = 0;
-									#else
-										return ac_KickWithCode(playerid, "", 0, 9, 3);
+									if(++ACInfo[playerid][acCheatCount][15] > AC_MAX_SPEEDHACK_WARNINGS)
+									{
+										#undef AC_MAX_SPEEDHACK_WARNINGS
+										#if defined DEBUG
+											printf("[Nex-AC debug] Speed: %d, old speed: %d, veh speed: %d",
+											ac_s, ACInfo[playerid][acSpeed], ac_vsp);
+										#endif
+										#if defined OnCheatDetected
+											ac_KickWithCode(playerid, "", 0, 9, 3);
+											if(ACInfo[playerid][acKicked] > 0) return 0;
+											ACInfo[playerid][acCheatCount][15] = 0;
+										#else
+											return ac_KickWithCode(playerid, "", 0, 9, 3);
+										#endif
+									}
+									#if defined OnCheatWarning
+										else OnCheatWarning(playerid, "", 0, 9, 3, ACInfo[playerid][acCheatCount][15]);
 									#endif
 								}
-								#if defined OnCheatWarning
-									else OnCheatWarning(playerid, "", 0, 9, 3, ACInfo[playerid][acCheatCount][15]);
-								#endif
+								else ACInfo[playerid][acCheatCount][15] = 0;
 							}
-							else ACInfo[playerid][acCheatCount][15] = 0;
+							ACInfo[playerid][acSpeed] = ac_s;
+							ACInfo[playerid][acVelZ] = ac_vZ;
 						}
-						if(ACInfo[playerid][acACAllow][2] && ac_gtc > ACInfo[playerid][acGtc][10] + ac_gpp)
-						{
-							if(ac_dist >= AC_MIN_STREAM_DISTANCE && (ac_a == INVALID_VEHICLE_ID || ACVehInfo[ac_a][acDriver] == INVALID_PLAYER_ID) ||
-							ac_dist >= AC_STREAM_DISTANCE && ac_a != INVALID_VEHICLE_ID && ACVehInfo[ac_a][acDriver] != INVALID_PLAYER_ID && ac_gtc > ACInfo[playerid][acGtc][20] + ac_gpp)
-							{
-								#undef AC_MIN_STREAM_DISTANCE
-								#if defined DEBUG
-									printf("[Nex-AC debug] Dist: %f, dist set: %f, speed: %d, pos x, y, z: %f, %f, %f, surfing veh: %d",
-									ac_dist, ac_dist_set, ac_s, ACInfo[playerid][acPosX], ACInfo[playerid][acPosY], ACInfo[playerid][acPosZ], ac_a);
-								#endif
-								#if defined OnCheatDetected
-									ac_KickWithCode(playerid, "", 0, 2, 7);
-									if(ACInfo[playerid][acKicked] > 0) return 0;
-								#else
-									return ac_KickWithCode(playerid, "", 0, 2, 7);
-								#endif
-							}
-						}
-						ACInfo[playerid][acSpeed] = ac_s;
-						ACInfo[playerid][acVelZ] = ac_vZ;
 					}
 					ACInfo[playerid][acAnim] = ac_sa;
 				}
@@ -5874,7 +5877,7 @@ public OnPlayerUpdate(playerid)
 			ACInfo[playerid][acPosX] = ac_pX;
 			ACInfo[playerid][acPosY] = ac_pY;
 			ACInfo[playerid][acPosZ] = ac_pZ;
-			ACInfo[playerid][acPackages]++;
+			ACInfo[playerid][acPackets]++;
 		}
 	#if AC_USE_NPC
 		}
@@ -8307,14 +8310,14 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					#endif
 				}
 				new Float:ac_zDiff, Float:ac_zAngle = atan2(2.0 * ((ac_cData[PR_quaternion][2] * ac_cData[PR_quaternion][3]) + (ac_cData[PR_quaternion][0] * ac_cData[PR_quaternion][1])),
-				(ac_cData[PR_quaternion][0] * ac_cData[PR_quaternion][0]) - (ac_cData[PR_quaternion][1] * ac_cData[PR_quaternion][1]) - (ac_cData[PR_quaternion][2] *
-				ac_cData[PR_quaternion][2]) + (ac_cData[PR_quaternion][3] * ac_cData[PR_quaternion][3]));
+				(ac_cData[PR_quaternion][0] * ac_cData[PR_quaternion][0]) - (ac_cData[PR_quaternion][1] * ac_cData[PR_quaternion][1]) -
+				(ac_cData[PR_quaternion][2] * ac_cData[PR_quaternion][2]) + (ac_cData[PR_quaternion][3] * ac_cData[PR_quaternion][3]));
 				if(ACInfo[playerid][acACAllow][25] && (ac_zDiff = floatabs(ac_zAngle - ACInfo[playerid][acQuaternion])) > 90.0 &&
 				GetTickCount() > ACInfo[playerid][acGtc][19] + GetPlayerPing(playerid))
 				{
-					if(++ACInfo[playerid][acCheatCount][22] > AC_MAX_VEHQUATERN_WARNINGS)
+					if(++ACInfo[playerid][acCheatCount][22] > AC_MAX_QUATERN_VEH_WARNINGS)
 					{
-						#undef AC_MAX_VEHQUATERN_WARNINGS
+						#undef AC_MAX_QUATERN_VEH_WARNINGS
 						#if defined DEBUG
 							printf("[Nex-AC debug] Quaternion w, x, y, z: %f, %f, %f, %f, last angle: %f, diff angle: %f",
 							ac_cData[PR_quaternion][0], ac_cData[PR_quaternion][1], ac_cData[PR_quaternion][2], ac_cData[PR_quaternion][3], ACInfo[playerid][acQuaternion], ac_zDiff);
@@ -8425,25 +8428,6 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				new ac_fData[PR_OnFootSync];
 				BS_IgnoreBits(bs, 8);
 				BS_ReadOnFootSync(bs, ac_fData);
-				if(ac_fData[PR_surfingOffsets][0] != ac_fData[PR_surfingOffsets][0] ||
-				ac_fData[PR_surfingOffsets][1] != ac_fData[PR_surfingOffsets][1] ||
-				ac_fData[PR_surfingOffsets][2] != ac_fData[PR_surfingOffsets][2])
-				{
-					ac_fData[PR_surfingOffsets][0] =
-					ac_fData[PR_surfingOffsets][1] =
-					ac_fData[PR_surfingOffsets][2] = 0.0;
-					ac_fData[PR_surfingVehicleId] = 0;
-					BS_SetWriteOffset(bs, 8);
-					BS_WriteOnFootSync(bs, ac_fData);
-				}
-				else if(ac_fData[PR_surfingVehicleId] != 0 &&
-				ac_fData[PR_surfingOffsets][0] == 0.0 && ac_fData[PR_surfingOffsets][1] == 0.0 &&
-				ac_fData[PR_surfingOffsets][2] == 0.0)
-				{
-					ac_fData[PR_surfingVehicleId] = 0;
-					BS_SetWriteOffset(bs, 8);
-					BS_WriteOnFootSync(bs, ac_fData);
-				}
 				if(ac_fData[PR_quaternion][0] != ac_fData[PR_quaternion][0] ||
 				ac_fData[PR_quaternion][1] != ac_fData[PR_quaternion][1] ||
 				ac_fData[PR_quaternion][2] != ac_fData[PR_quaternion][2] ||
@@ -8544,7 +8528,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					if(0 < ac_t < MAX_VEHICLES)
 					{
 						new ac_model = GetVehicleModel(ac_t), ac_gtc = GetTickCount(), ac_gpp = GetPlayerPing(playerid);
-						if(ac_model == 0 && ac_gtc > ACVehInfo[ac_t][acGtc][0] + ac_gpp)
+						if(ac_model == 0 && ac_gtc - ACVehInfo[ac_t][acGtc][0] > ac_gpp)
 						{
 							#if defined DEBUG
 								printf("[Nex-AC debug] Veh model: %d, vehicleid: %d", ac_model, ac_t);
@@ -8594,11 +8578,11 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 								new Float:ac_maxdist = 50.0 + floatround(ACVehInfo[ac_t][acSpeed] / 5);
 								if(ac_IsATrainPartEx(ac_model)) ac_maxdist += 80.0;
 								if((ac_zAngle >= ac_maxdist && ACVehInfo[ac_t][acDriver] == INVALID_PLAYER_ID || ac_zAngle >= AC_STREAM_DISTANCE && ACVehInfo[ac_t][acDriver] != INVALID_PLAYER_ID)
-								&& ac_gtc > ACVehInfo[ac_t][acGtc][1] + ac_gpp && ACVehInfo[ac_t][acPosZ] > -95.0)
+								&& ac_gtc - ACVehInfo[ac_t][acGtc][1] > ac_gpp && ACVehInfo[ac_t][acPosZ] > -95.0)
 								{
-									if(++ACInfo[playerid][acCheatCount][24] > AC_MAX_STREAMSURF_WARNINGS)
+									if(++ACInfo[playerid][acCheatCount][24] > AC_MAX_STREAM_SURF_WARNINGS)
 									{
-										#undef AC_MAX_STREAMSURF_WARNINGS
+										#undef AC_MAX_STREAM_SURF_WARNINGS
 										#if defined DEBUG
 											printf("[Nex-AC debug] Veh x, y, z: %f, %f, %f, player x, y, z: %f, %f, %f, distance: %f, max distance: %f",
 											ACVehInfo[ac_t][acPosX], ACVehInfo[ac_t][acPosY], ACVehInfo[ac_t][acPosZ], ac_fData[PR_position][0],
@@ -8675,9 +8659,9 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 								#endif
 								if(ac_zAngle >= 50.0)
 								{
-									if(++ACInfo[playerid][acCheatCount][24] > AC_MAX_DISTSURF_WARNINGS)
+									if(++ACInfo[playerid][acCheatCount][24] > AC_MAX_DIST_SURF_WARNINGS)
 									{
-										#undef AC_MAX_DISTSURF_WARNINGS
+										#undef AC_MAX_DIST_SURF_WARNINGS
 										#if defined DEBUG
 											printf("[Nex-AC debug] Object x, y, z: %f, %f, %f, player x, y, z: %f, %f, %f, distance: %f",
 											ac_x, ac_y, ac_z, ac_fData[PR_position][0], ac_fData[PR_position][1], ac_fData[PR_position][2], ac_zAngle);
@@ -8722,6 +8706,25 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					#else
 						return ac_KickWithCode(playerid, "", 0, 24, 2);
 					#endif
+				}
+				if(ac_fData[PR_surfingOffsets][0] != ac_fData[PR_surfingOffsets][0] ||
+				ac_fData[PR_surfingOffsets][1] != ac_fData[PR_surfingOffsets][1] ||
+				ac_fData[PR_surfingOffsets][2] != ac_fData[PR_surfingOffsets][2])
+				{
+					ac_fData[PR_surfingOffsets][0] =
+					ac_fData[PR_surfingOffsets][1] =
+					ac_fData[PR_surfingOffsets][2] = 0.0;
+					ac_fData[PR_surfingVehicleId] = 0;
+					BS_SetWriteOffset(bs, 8);
+					BS_WriteOnFootSync(bs, ac_fData);
+				}
+				else if(ac_fData[PR_surfingVehicleId] != 0 &&
+				ac_fData[PR_surfingOffsets][0] == 0.0 && ac_fData[PR_surfingOffsets][1] == 0.0 &&
+				ac_fData[PR_surfingOffsets][2] == 0.0)
+				{
+					ac_fData[PR_surfingVehicleId] = 0;
+					BS_SetWriteOffset(bs, 8);
+					BS_WriteOnFootSync(bs, ac_fData);
 				}
 				BS_ResetReadPointer(bs);
 			}
@@ -9294,17 +9297,17 @@ ac_fpublic ac_Timer(playerid)
 				}
 				if(ACInfo[playerid][acACAllow][51])
 				{
-					ac_s = ACInfo[playerid][acPackages] - ACInfo[playerid][acLastPackages];
-					ac_t = ACInfo[playerid][acLastPackages] > 0 ? (ac_gtc - ACInfo[playerid][acPackagesTime]) / ACInfo[playerid][acLastPackages] : -1;
-					if(ACInfo[playerid][acPackages] >= 30 && ac_t != -1 && (ac_t + ac_s) <= 30 && ac_s >= 5)
+					ac_s = ACInfo[playerid][acPackets] - ACInfo[playerid][acLastPackets];
+					ac_t = ACInfo[playerid][acLastPackets] > 0 ? (ac_gtc - ACInfo[playerid][acPacketsTick]) / ACInfo[playerid][acLastPackets] : -1;
+					if(ACInfo[playerid][acPackets] >= 30 && ac_t != -1 && (ac_t + ac_s) <= 30 && ac_s >= 5)
 					{
-						ACInfo[playerid][acCheatCount][25] += (1 * AC_PACKAGES_RESET_DELAY);
-						if(ACInfo[playerid][acCheatCount][25] > AC_MAX_PACKAGES_WARNINGS)
+						ACInfo[playerid][acCheatCount][25] += (1 * AC_PACKETS_RESET_DELAY);
+						if(ACInfo[playerid][acCheatCount][25] > AC_MAX_PACKETS_WARNINGS)
 						{
-							#undef AC_MAX_PACKAGES_WARNINGS
+							#undef AC_MAX_PACKETS_WARNINGS
 							#if defined DEBUG
-								printf("[Nex-AC debug] Packages: %d, last packages: %d, diff packages: %d, optimal packages: %d",
-								ACInfo[playerid][acPackages], ACInfo[playerid][acLastPackages], ac_s, ac_t);
+								printf("[Nex-AC debug] Packets: %d, last packets: %d, diff: %d, optimal packets count: %d",
+								ACInfo[playerid][acPackets], ACInfo[playerid][acLastPackets], ac_s, ac_t);
 							#endif
 							ac_KickWithCode(playerid, "", 0, 51, 2);
 							#if defined OnCheatDetected
@@ -9312,13 +9315,13 @@ ac_fpublic ac_Timer(playerid)
 							#endif
 						}
 						#if defined OnCheatWarning
-							else OnCheatWarning(playerid, "", 0, 51, 2, floatround(ACInfo[playerid][acCheatCount][25] / AC_PACKAGES_RESET_DELAY));
+							else OnCheatWarning(playerid, "", 0, 51, 2, floatround(ACInfo[playerid][acCheatCount][25] / AC_PACKETS_RESET_DELAY));
 						#endif
-						#undef AC_PACKAGES_RESET_DELAY
+						#undef AC_PACKETS_RESET_DELAY
 					}
-					ACInfo[playerid][acPackages] = 0;
-					ACInfo[playerid][acLastPackages] = ACInfo[playerid][acPackages];
-					ACInfo[playerid][acPackagesTime] = ac_gtc;
+					ACInfo[playerid][acPackets] = 0;
+					ACInfo[playerid][acLastPackets] = ACInfo[playerid][acPackets];
+					ACInfo[playerid][acPacketsTick] = ac_gtc;
 				}
 			}
 			ac_t = orig_GetPlayerMoney(playerid);
