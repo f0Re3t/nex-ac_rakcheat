@@ -1,5 +1,5 @@
 //Nex-AC by Nexius v1.9.53 (0.3.7)
-//Modification rakcheat by f0Re3t v2.0.6
+//Modification rakcheat by f0Re3t v2.0.7
 
 #if defined _nex_ac_included
 	#endinput
@@ -28,7 +28,7 @@
 #endif
 
 #define	NEX_AC_VERSION				"1.9.53"
-#define	RAKCHEAT_MODULE_VERSION		"2.0.6"
+#define	RAKCHEAT_MODULE_VERSION		"2.0.7"
 
 #define AC_SERVER_VERSION			"0.3.7"
 #define AC_SERVER_DL_VERSION		"0.3.DL"
@@ -6507,6 +6507,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate)
 				ACInfo[playerid][acSpeed] = ac_GetSpeed(ac_x, ac_y, ac_z);
 				if(ACInfo[playerid][acSet][7] == 3) ACInfo[playerid][acSet][7] = -1;
 				ACInfo[playerid][acGtc][15] = ACInfo[playerid][acGtc][9] = ac_i + 1650;
+				ACVehInfo[ACInfo[playerid][acVeh]][acGtc][1] = 4650;
 			}
 			case PLAYER_STATE_PASSENGER:
 			{
@@ -8335,7 +8336,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					#endif
 				}
 				else ACInfo[playerid][acCheatCount][22] = 0;
-				if(ACInfo[playerid][acACAllow][3] && ac_cData[PR_trailerId] != 0 && GetVehicleModel(ac_cData[PR_trailerId]) <= 0)
+				if(ACInfo[playerid][acACAllow][3] && ac_cData[PR_trailerId] != 0 && GetVehicleModel(ac_cData[PR_trailerId]) <= 0 && GetTickCount() - ACVehInfo[ac_cData[PR_trailerId]][acGtc][0] > GetPlayerPing(playerid))
 				{
 					#if defined DEBUG
 						printf("[Nex-AC debug] Trailerid: %d, vehicleid: %d", ac_cData[PR_trailerId], ac_cData[PR_vehicleId]);
@@ -8461,7 +8462,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				{
 					new Float:ac_zDiff = ac_fData[PR_position][2] - ACInfo[playerid][acPosZ];
 					if((floatabs(ac_fData[PR_quaternion][1]) > 0.0 || floatabs(ac_fData[PR_quaternion][2]) > 0.0) &&
-					ACInfo[playerid][acHoldWeapon] != WEAPON_PARACHUTE && ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE &&
+					ac_fData[PR_weaponId] != WEAPON_PARACHUTE && ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE &&
 					ACInfo[playerid][acEnterVeh] == 0)
 					{
 						if(ac_fData[PR_animationId] != 1130 && ac_fData[PR_animationId] != 1132)
