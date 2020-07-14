@@ -8291,7 +8291,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 		{
 			case 200:
 			{
-				new ac_cData[PR_InCarSync];
+				new ac_cData[PR_InCarSync], ac_gtc = GetTickCount(), ac_gpp = GetPlayerPing(playerid);
 				BS_IgnoreBits(bs, 8);
 				BS_ReadInCarSync(bs, ac_cData);
 				if(ac_cData[PR_quaternion][0] != ac_cData[PR_quaternion][0] ||
@@ -8314,7 +8314,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				(ac_cData[PR_quaternion][0] * ac_cData[PR_quaternion][0]) - (ac_cData[PR_quaternion][1] * ac_cData[PR_quaternion][1]) -
 				(ac_cData[PR_quaternion][2] * ac_cData[PR_quaternion][2]) + (ac_cData[PR_quaternion][3] * ac_cData[PR_quaternion][3]));
 				if(ACInfo[playerid][acACAllow][25] && (ac_zDiff = floatabs(ac_zAngle - ACInfo[playerid][acQuaternion])) > 90.0 &&
-				GetTickCount() > ACInfo[playerid][acGtc][19] + GetPlayerPing(playerid))
+				ac_gtc > ACInfo[playerid][acGtc][19] + ac_gpp)
 				{
 					if(++ACInfo[playerid][acCheatCount][22] > AC_MAX_QUATERN_VEH_WARNINGS)
 					{
@@ -8336,7 +8336,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					#endif
 				}
 				else ACInfo[playerid][acCheatCount][22] = 0;
-				if(ACInfo[playerid][acACAllow][3] && ac_cData[PR_trailerId] != 0 && GetVehicleModel(ac_cData[PR_trailerId]) <= 0 && GetTickCount() - ACVehInfo[ac_cData[PR_trailerId]][acGtc][0] > GetPlayerPing(playerid))
+				if(ACInfo[playerid][acACAllow][3] && ac_cData[PR_trailerId] != 0 && GetVehicleModel(ac_cData[PR_trailerId]) <= 0 && ac_gtc - ACVehInfo[ac_cData[PR_trailerId]][acGtc][0] > ac_gpp)
 				{
 					#if defined DEBUG
 						printf("[Nex-AC debug] Trailerid: %d, vehicleid: %d", ac_cData[PR_trailerId], ac_cData[PR_vehicleId]);
@@ -8469,7 +8469,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						{
 							#if defined DEBUG
 								printf("[Nex-AC debug] Quaternion x, y: %f, %f, weaponid: %d, spec act: %d, anim: %d",
-								ac_fData[PR_quaternion][1], ac_fData[PR_quaternion][2], ACInfo[playerid][acHoldWeapon], ac_fData[PR_specialAction], ac_fData[PR_animationId]);
+								ac_fData[PR_quaternion][1], ac_fData[PR_quaternion][2], ac_fData[PR_weaponId], ac_fData[PR_specialAction], ac_fData[PR_animationId]);
 							#endif
 							#if defined OnCheatDetected
 								ac_KickWithCode(playerid, "", 0, 7, 4);
