@@ -874,7 +874,7 @@ enum acInfo
 	acKicked,
 	acIp[16],
 	acSet[13],
-	acGtc[21],
+	acGtc[20],
 	acWeapon[13],
 	acAmmo[13],
 	acSetWeapon[13],
@@ -1700,7 +1700,6 @@ ac_fpublic ac_SetVehiclePos(vehicleid, Float:ac_x, Float:ac_y, Float:ac_z)
 			ACInfo[ac_i][acSetPosZ] = ac_z;
 			ACInfo[ac_i][acSetPosTick] =
 			ACInfo[ac_i][acGtc][10] = ac_gtc + 3850;
-			ACInfo[ac_i][acGtc][20] = ac_gtc + 2650;
 			#if defined FreezeSyncPacket
 				if(!ACInfo[ac_i][acUnFrozen]) FreezeSyncPacket(ac_i, E_ALL_SYNC, false);
 			#endif
@@ -5818,8 +5817,7 @@ public OnPlayerUpdate(playerid)
 					else
 					{
 						if(ACInfo[playerid][acACAllow][2] && ac_gtc - ACInfo[playerid][acGtc][10] > ac_gpp &&
-						(ac_dist >= AC_MIN_STREAM_DISTANCE && (ac_a == INVALID_VEHICLE_ID || ACVehInfo[ac_a][acDriver] == INVALID_PLAYER_ID) ||
-						ac_dist >= AC_STREAM_DISTANCE && ac_a != INVALID_VEHICLE_ID && ACVehInfo[ac_a][acDriver] != INVALID_PLAYER_ID && ac_gtc - ACInfo[playerid][acGtc][20] > ac_gpp))
+						(ac_dist >= AC_STREAM_DISTANCE || ac_dist >= AC_MIN_STREAM_DISTANCE && (ac_a == INVALID_VEHICLE_ID || ACVehInfo[ac_a][acDriver] == INVALID_PLAYER_ID)))
 						{
 							#undef AC_MIN_STREAM_DISTANCE
 							#if defined DEBUG
