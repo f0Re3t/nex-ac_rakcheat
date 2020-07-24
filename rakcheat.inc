@@ -8336,7 +8336,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				}
 				else ACInfo[playerid][acCheatCount][22] = 0;
 				if(ACInfo[playerid][acACAllow][3] && ac_cData[PR_trailerId] != 0 && GetVehicleModel(ac_cData[PR_trailerId]) <= 0 &&
-				ac_gtc - ACVehInfo[ac_cData[PR_trailerId]][acGtc][0] > ac_gpp)
+				(!(1 <= ac_cData[PR_trailerId] < MAX_VEHICLES) || ac_gtc - ACVehInfo[ac_cData[PR_trailerId]][acGtc][0] > ac_gpp))
 				{
 					#if defined DEBUG
 						printf("[Nex-AC debug] Trailerid: %d, vehicleid: %d", ac_cData[PR_trailerId], ac_cData[PR_vehicleId]);
