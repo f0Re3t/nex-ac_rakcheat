@@ -1690,7 +1690,7 @@ ac_fpublic ac_SetVehiclePos(vehicleid, Float:ac_x, Float:ac_y, Float:ac_z)
 			if(IsPlayerConnected(ac_i))
 	#endif
 	{
-		if(ac_driver != INVALID_PLAYER_ID && GetPlayerSurfingVehicleID(ac_i) == vehicleid && ac_gtc < ACInfo[ac_i][acUpdateTick] + 1500)
+		if(ac_driver != INVALID_PLAYER_ID && GetPlayerSurfingVehicleID(ac_i) == vehicleid && ac_gtc - ACInfo[ac_i][acUpdateTick] < 1500)
 		{
 			ACInfo[ac_i][acSet][7] = 5;
 			ACInfo[ac_i][acTpToZ] = false;
@@ -3684,8 +3684,8 @@ public OnPlayerConnect(playerid)
 		ACInfo[playerid][acDead] = true;
 		ACInfo[playerid][acIntEnterExits] = ac_IntEnterExits;
 		ACInfo[playerid][acStuntBonus] = ac_StuntBonus;
-		ACInfo[playerid][acCheatCount][0] =
 		ACInfo[playerid][acCheatCount][25] =
+		ACInfo[playerid][acCheatCount][0] =
 		ACInfo[playerid][acHoldWeapon] =
 		ACInfo[playerid][acSpawnRes] =
 		ACInfo[playerid][acMoney] =
@@ -6543,7 +6543,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate)
 			case PLAYER_STATE_SPECTATING:
 			{
 				if(ACInfo[playerid][acACAllow][48] &&
-				!(PLAYER_STATE_WASTED <= newstate <= PLAYER_STATE_SPAWNED) && ac_i > ACInfo[playerid][acGtc][0] + ac_s)
+				!(PLAYER_STATE_WASTED <= newstate <= PLAYER_STATE_SPAWNED) && ac_i - ACInfo[playerid][acGtc][0] > ac_s)
 				{
 					#if defined DEBUG
 						printf("[Nex-AC debug] Newstate: %d", newstate);
@@ -8339,7 +8339,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				(!(1 <= ac_cData[PR_trailerId] < MAX_VEHICLES) || ac_gtc - ACVehInfo[ac_cData[PR_trailerId]][acGtc][0] > ac_gpp))
 				{
 					#if defined DEBUG
-						printf("[Nex-AC debug] Trailerid: %d, vehicleid: %d", ac_cData[PR_trailerId], ac_cData[PR_vehicleId]);
+						printf("[Nex-AC debug] Veh: %d, trailerid: %d", ac_cData[PR_vehicleId], ac_cData[PR_trailerId]);
 					#endif
 					#if defined OnCheatDetected
 						ac_KickWithCode(playerid, "", 0, 3, 5);
@@ -8506,7 +8506,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						{
 							#undef AC_MAX_FLYHACK_WARNINGS
 							#if defined DEBUG
-								printf("[Nex-AC debug] Dist: %f, pos diff z: %f, vel z / old vel z: %f / %f, anim: %d, pos z / old pos z: %f / %f",
+								printf("[Nex-AC debug] Dist: %f, pos diff z: %f, vel z: %f, old vel z: %f, anim: %d, pos z: %f, old pos z: %f",
 								ac_zAngle, ac_zDiff, ac_fData[PR_velocity][2], ACInfo[playerid][acVelZ], ac_fData[PR_animationId], ac_fData[PR_position][2], ACInfo[playerid][acPosZ]);
 							#endif
 							#if defined OnCheatDetected
@@ -8532,7 +8532,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						if(ac_model == 0 && ac_gtc - ACVehInfo[ac_t][acGtc][0] > ac_gpp)
 						{
 							#if defined DEBUG
-								printf("[Nex-AC debug] Veh model: %d, vehicleid: %d", ac_model, ac_t);
+								printf("[Nex-AC debug] Veh model: %d, veh: %d", ac_model, ac_t);
 							#endif
 							#if defined OnCheatDetected
 								ac_KickWithCode(playerid, "", 0, 2, 8);
@@ -8578,14 +8578,14 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 								#endif
 								new Float:ac_maxdist = 50.0 + floatround(ACVehInfo[ac_t][acSpeed] / 5);
 								if(ac_IsATrainPartEx(ac_model)) ac_maxdist += 80.0;
-								if((ac_zAngle >= ac_maxdist && ACVehInfo[ac_t][acDriver] == INVALID_PLAYER_ID || ac_zAngle >= AC_STREAM_DISTANCE && ACVehInfo[ac_t][acDriver] != INVALID_PLAYER_ID)
+								if((ac_zAngle >= AC_STREAM_DISTANCE || ac_zAngle >= ac_maxdist && ACVehInfo[ac_t][acDriver] == INVALID_PLAYER_ID)
 								&& ac_gtc - ACVehInfo[ac_t][acGtc][1] > ac_gpp && ACVehInfo[ac_t][acPosZ] > -95.0)
 								{
 									if(++ACInfo[playerid][acCheatCount][24] > AC_MAX_STREAM_SURF_WARNINGS)
 									{
 										#undef AC_MAX_STREAM_SURF_WARNINGS
 										#if defined DEBUG
-											printf("[Nex-AC debug] Veh x, y, z: %f, %f, %f, player x, y, z: %f, %f, %f, distance: %f, max distance: %f",
+											printf("[Nex-AC debug] Veh x, y, z: %f, %f, %f, player x, y, z: %f, %f, %f, dist: %f, max dist: %f",
 											ACVehInfo[ac_t][acPosX], ACVehInfo[ac_t][acPosY], ACVehInfo[ac_t][acPosZ], ac_fData[PR_position][0],
 											ac_fData[PR_position][1], ac_fData[PR_position][2], ac_zAngle, ac_maxdist);
 										#endif
@@ -8664,7 +8664,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 									{
 										#undef AC_MAX_DIST_SURF_WARNINGS
 										#if defined DEBUG
-											printf("[Nex-AC debug] Object x, y, z: %f, %f, %f, player x, y, z: %f, %f, %f, distance: %f",
+											printf("[Nex-AC debug] Object x, y, z: %f, %f, %f, player x, y, z: %f, %f, %f, dist: %f",
 											ac_x, ac_y, ac_z, ac_fData[PR_position][0], ac_fData[PR_position][1], ac_fData[PR_position][2], ac_zAngle);
 										#endif
 										#if defined OnCheatDetected
@@ -8699,7 +8699,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				if(ACInfo[playerid][acACAllow][24] && ac_fData[PR_animationFlags] == 0)
 				{
 					#if defined DEBUG
-						printf("[Nex-AC debug] Animation flags: %d", ac_fData[PR_animationFlags]);
+						printf("[Nex-AC debug] Anim flags: %d", ac_fData[PR_animationFlags]);
 					#endif
 					#if defined OnCheatDetected
 						ac_KickWithCode(playerid, "", 0, 24, 2);
