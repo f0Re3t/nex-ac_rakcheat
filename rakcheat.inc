@@ -1,5 +1,5 @@
 //Nex-AC by Nexius v1.9.53 (0.3.7)
-//Modification rakcheat by f0Re3t v2.0.7
+//Modification rakcheat by f0Re3t v2.0.8
 
 #if defined _nex_ac_included
 	#endinput
@@ -28,7 +28,7 @@
 #endif
 
 #define	NEX_AC_VERSION				"1.9.53"
-#define	RAKCHEAT_MODULE_VERSION		"2.0.7"
+#define	RAKCHEAT_MODULE_VERSION		"2.0.8"
 
 #define AC_SERVER_VERSION			"0.3.7"
 #define AC_SERVER_DL_VERSION		"0.3.DL"
@@ -5035,10 +5035,12 @@ public OnPlayerUpdate(playerid)
 					{
 						ACInfo[playerid][acSet][7] = -1;
 						ACInfo[playerid][acGtc][10] = 0;
-						ACInfo[playerid][acLastPosX] = ACInfo[playerid][acLastFivePosX] = ac_pX;
-						ACInfo[playerid][acLastPosY] = ACInfo[playerid][acLastFivePosY] = ac_pY;
-						ACInfo[playerid][acPosX] = ac_pX;
-						ACInfo[playerid][acPosY] = ac_pY;
+						ACInfo[playerid][acPosX] =
+						ACInfo[playerid][acLastPosX] =
+						ACInfo[playerid][acLastFivePosX] = ac_pX;
+						ACInfo[playerid][acPosY] =
+						ACInfo[playerid][acLastPosY] =
+						ACInfo[playerid][acLastFivePosY] = ac_pY;
 						ACInfo[playerid][acPosZ] = ac_pZ;
 						#if defined FreezeSyncPacket
 							if(ACInfo[playerid][acACAllow][33] && !ACInfo[playerid][acUnFrozen]) FreezeSyncPacket(playerid, E_ALL_SYNC, true);
@@ -6539,6 +6541,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate)
 				ACInfo[playerid][acVelZ] = ac_z;
 				ACInfo[playerid][acSpeed] = ac_GetSpeed(ac_x, ac_y, ac_z);
 				ACInfo[playerid][acGtc][15] = ACInfo[playerid][acGtc][9] = ac_i + 1650;
+				ACVehInfo[ACInfo[playerid][acVeh]][acGtc][1] = 4650;
 			}
 			case PLAYER_STATE_SPECTATING:
 			{
@@ -6562,7 +6565,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate)
 					GetPlayerPos(playerid, ACInfo[playerid][acPosX], ACInfo[playerid][acPosY], ACInfo[playerid][acPosZ]);
 					ACInfo[playerid][acLastPosX] = ACInfo[playerid][acPosX];
 					ACInfo[playerid][acLastPosY] = ACInfo[playerid][acPosY];
-					if(ACInfo[playerid][acACAllow][53] && GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], ACInfo[playerid][acPosZ]) < AC_STREAM_DISTANCE)
+					if(GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], ACInfo[playerid][acPosZ]) < AC_STREAM_DISTANCE)
 					{
 						ACInfo[playerid][acLastFivePosX] = ACInfo[playerid][acPosX];
 						ACInfo[playerid][acLastFivePosY] = ACInfo[playerid][acPosY];
@@ -8461,7 +8464,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				if(ACInfo[playerid][acACAllow][7] && ACInfo[playerid][acSet][7] == -1)
 				{
 					new Float:ac_zDiff = ac_fData[PR_position][2] - ACInfo[playerid][acPosZ];
-					if((floatabs(ac_fData[PR_quaternion][1]) > 0.0 || floatabs(ac_fData[PR_quaternion][2]) > 0.0) &&
+					if((floatabs(ac_fData[PR_quaternion][1]) != 0.0 || floatabs(ac_fData[PR_quaternion][2]) != 0.0) &&
 					ac_fData[PR_weaponId] != WEAPON_PARACHUTE && ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE &&
 					ACInfo[playerid][acEnterVeh] == 0)
 					{
@@ -8623,8 +8626,8 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						}
 						else
 						{
-							if(floatabs(ac_fData[PR_surfingOffsets][0]) >= 50.0 || floatabs(ac_fData[PR_surfingOffsets][1]) >= 50.0 ||
-							floatabs(ac_fData[PR_surfingOffsets][2]) >= 50.0)
+							if(floatabs(ac_fData[PR_surfingOffsets][0]) >= 150.0 || floatabs(ac_fData[PR_surfingOffsets][1]) >= 150.0 ||
+							floatabs(ac_fData[PR_surfingOffsets][2]) >= 150.0)
 							{
 								if(++ACInfo[playerid][acCheatCount][23] > AC_MAX_SURF_WARNINGS)
 								{
