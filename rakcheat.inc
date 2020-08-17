@@ -8661,7 +8661,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 									ac_zAngle = floatsqroot(floatpower(ac_fData[PR_position][0] - ac_x, 2.0) + floatpower(ac_fData[PR_position][1] - ac_y, 2.0) +
 									floatpower(ac_fData[PR_position][2] - ac_z, 2.0));
 								#endif
-								if(ac_zAngle >= 50.0)
+								if(ac_zAngle >= 150.0)
 								{
 									if(++ACInfo[playerid][acCheatCount][24] > AC_MAX_DIST_SURF_WARNINGS)
 									{
