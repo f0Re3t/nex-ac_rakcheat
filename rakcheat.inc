@@ -951,6 +951,8 @@ static
 	ACInfo[MAX_PLAYERS][acInfo],
 	ACVehInfo[MAX_VEHICLES][acVehInfo],
 	ACPickInfo[MAX_PICKUPS][acPickInfo],
+	
+	ACObjInfo[MAX_OBJECTS],
 
 	bool:ac_IntEnterExits = true,
 	bool:ac_StuntBonus = true,
@@ -8528,10 +8530,10 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				}
 				if(ACInfo[playerid][acACAllow][2] && ac_fData[PR_surfingVehicleId] != 0)
 				{
-					new ac_t = ac_fData[PR_surfingVehicleId];
+					new ac_t = ac_fData[PR_surfingVehicleId], ac_gtc = GetTickCount(), ac_gpp = GetPlayerPing(playerid);
 					if(0 < ac_t < MAX_VEHICLES)
 					{
-						new ac_model = GetVehicleModel(ac_t), ac_gtc = GetTickCount(), ac_gpp = GetPlayerPing(playerid);
+						new ac_model = GetVehicleModel(ac_t);
 						if(ac_model == 0 && ac_gtc - ACVehInfo[ac_t][acGtc][0] > ac_gpp)
 						{
 							#if defined DEBUG
@@ -8612,7 +8614,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					{
 						ac_t -= 2000;
 						new ac_tmp = IsValidObject(ac_t);
-						if(!ac_tmp && !IsValidPlayerObject(playerid, ac_t))
+						if(!ac_tmp && !IsValidPlayerObject(playerid, ac_t) && ac_gtc - ACObjInfo[ac_t] > ac_gpp)
 						{
 							#if defined DEBUG
 								printf("[Nex-AC debug] Object: %d", ac_t);
@@ -8884,6 +8886,39 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 	#define OnIncomingRPC ac_OnIncomingRPC
 	#if defined ac_OnIncomingRPC
 		forward ac_OnIncomingRPC(playerid, rpcid, BitStream:bs);
+	#endif
+	
+	public OnOutcomingRPC(playerid, rpcid, BitStream:bs)
+	{
+		if(rpcid == 44) // RPC_CreateObject
+		{
+			new ac_tmp;
+			BS_ReadValue(bs, PR_UINT16, ac_tmp);
+			ACObjInfo[ac_tmp] = 0;
+			BS_ResetReadPointer(bs);
+		}
+		else if(rpcid == 47) // RPC_DestroyObject
+		{
+			new ac_tmp;
+			BS_ReadValue(bs, PR_UINT16, ac_tmp);
+			ACObjInfo[ac_tmp] = GetTickCount() + 1650;
+			BS_ResetReadPointer(bs);
+		}
+		#if defined ac_OnOutcomingRPC
+			return ac_OnOutcomingRPC(playerid, rpcid, bs);
+		#else
+			return 1;
+		#endif
+	}
+	
+	#if defined _ALS_OnOutcomingRPC
+		#undef OnOutcomingRPC
+	#else
+		#define _ALS_OnOutcomingRPC
+	#endif
+	#define OnOutcomingRPC ac_OnOutcomingRPC
+	#if defined ac_OnOutcomingRPC
+		forward ac_OnOutcomingRPC(playerid, rpcid, BitStream:bs);
 	#endif
 #endif
 
