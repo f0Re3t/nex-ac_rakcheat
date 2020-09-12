@@ -951,8 +951,10 @@ static
 	ACInfo[MAX_PLAYERS][acInfo],
 	ACVehInfo[MAX_VEHICLES][acVehInfo],
 	ACPickInfo[MAX_PICKUPS][acPickInfo],
-	
-	ACObjInfo[MAX_OBJECTS],
+
+	#if defined PAWNRAKNET_INC_
+		ACObjInfo[MAX_OBJECTS],
+	#endif
 
 	bool:ac_IntEnterExits = true,
 	bool:ac_StuntBonus = true,
@@ -8466,7 +8468,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				if(ACInfo[playerid][acACAllow][7] && ACInfo[playerid][acSet][7] == -1)
 				{
 					new Float:ac_zDiff = ac_fData[PR_position][2] - ACInfo[playerid][acPosZ];
-					if((floatabs(ac_fData[PR_quaternion][1]) != 0.0 || floatabs(ac_fData[PR_quaternion][2]) != 0.0) &&
+					if((floatabs(ac_fData[PR_quaternion][1]) > 0.001 || floatabs(ac_fData[PR_quaternion][2]) > 0.001) &&
 					ac_fData[PR_weaponId] != WEAPON_PARACHUTE && ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE &&
 					ACInfo[playerid][acEnterVeh] == 0)
 					{
@@ -8654,7 +8656,24 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 							{
 								ACInfo[playerid][acCheatCount][23] = 0;
 								new Float:ac_x, Float:ac_y, Float:ac_z;
-								if(!ac_tmp) GetPlayerObjectPos(playerid, ac_t, ac_x, ac_y, ac_z);
+								if(!ac_tmp)
+								{
+									#if defined Streamer_GetItemStreamerID\
+										&& defined IsValidDynamicObject\
+										&& defined Streamer_GetIntData\
+										&& defined GetDynamicObjectPos
+										new objid = Streamer_GetItemStreamerID(playerid, STREAMER_TYPE_OBJECT, ac_t);
+										if(!IsValidDynamicObject(objid)) GetPlayerObjectPos(playerid, ac_t, ac_x, ac_y, ac_z);
+										else
+										{
+											new vehid = Streamer_GetIntData(STREAMER_TYPE_OBJECT, objid, E_STREAMER_ATTACHED_VEHICLE);
+											if(vehid == INVALID_VEHICLE_ID) GetDynamicObjectPos(objid, ac_x, ac_y, ac_z);
+											else GetVehiclePos(vehid, ac_x, ac_y, ac_z);
+										}
+									#else
+										GetPlayerObjectPos(playerid, ac_t, ac_x, ac_y, ac_z);
+									#endif
+								}
 								else GetObjectPos(ac_t, ac_x, ac_y, ac_z);
 								#if defined VectorSize
 									ac_zAngle = VectorSize(ac_fData[PR_position][0] - ac_x, ac_fData[PR_position][1] - ac_y,
