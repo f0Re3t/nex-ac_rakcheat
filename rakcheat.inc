@@ -8656,19 +8656,28 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 							{
 								ACInfo[playerid][acCheatCount][23] = 0;
 								new Float:ac_x, Float:ac_y, Float:ac_z;
+								attached_surf_case:
 								if(!ac_tmp)
 								{
 									#if defined Streamer_GetItemStreamerID\
 										&& defined IsValidDynamicObject\
 										&& defined Streamer_GetIntData\
 										&& defined GetDynamicObjectPos
-										new objid = Streamer_GetItemStreamerID(playerid, STREAMER_TYPE_OBJECT, ac_t);
-										if(!IsValidDynamicObject(objid)) GetPlayerObjectPos(playerid, ac_t, ac_x, ac_y, ac_z);
+										ac_tmp = Streamer_GetItemStreamerID(playerid, STREAMER_TYPE_OBJECT, ac_t);
+										if(!IsValidDynamicObject(ac_tmp)) GetPlayerObjectPos(playerid, ac_t, ac_x, ac_y, ac_z);
 										else
 										{
-											new vehid = Streamer_GetIntData(STREAMER_TYPE_OBJECT, objid, E_STREAMER_ATTACHED_VEHICLE);
-											if(vehid == INVALID_VEHICLE_ID) GetDynamicObjectPos(objid, ac_x, ac_y, ac_z);
-											else GetVehiclePos(vehid, ac_x, ac_y, ac_z);
+											new ac_apid = Streamer_GetIntData(STREAMER_TYPE_OBJECT, ac_tmp, E_STREAMER_ATTACHED_PLAYER),
+											ac_avid = Streamer_GetIntData(STREAMER_TYPE_OBJECT, ac_tmp, E_STREAMER_ATTACHED_VEHICLE);
+											ac_t = Streamer_GetIntData(STREAMER_TYPE_OBJECT, ac_tmp, E_STREAMER_ATTACHED_OBJECT);
+											if(ac_apid != INVALID_PLAYER_ID) GetPlayerPos(ac_apid, ac_x, ac_y, ac_z);
+											else if(ac_avid != INVALID_VEHICLE_ID) GetVehiclePos(ac_avid, ac_x, ac_y, ac_z);
+											else if(ac_t > 0 && ac_t != INVALID_OBJECT_ID)
+											{
+												ac_tmp = IsValidObject(ac_t);
+												goto attached_surf_case;
+											}
+											else GetDynamicObjectPos(ac_tmp, ac_x, ac_y, ac_z);
 										}
 									#else
 										GetPlayerObjectPos(playerid, ac_t, ac_x, ac_y, ac_z);
