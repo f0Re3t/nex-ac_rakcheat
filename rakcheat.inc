@@ -8393,7 +8393,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					{
 						switch(ac_aData[PR_camMode])
 						{
-							case 0..2, 5, 6, 9..14, 17, 19..21, 23..45, 47..50, 52, 54, 60, 61, 65:
+							case 0..2, 5, 6, 9..14, 17, 19..21, 23..45, 48..50, 52, 54, 60, 61, 65:
 							{
 								#if defined DEBUG
 									printf("[Nex-AC debug] Cammode: %d", ac_aData[PR_camMode]);
@@ -8915,7 +8915,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 	#if defined ac_OnIncomingRPC
 		forward ac_OnIncomingRPC(playerid, rpcid, BitStream:bs);
 	#endif
-	
+
 	public OnOutcomingRPC(playerid, rpcid, BitStream:bs)
 	{
 		if(rpcid == 44) // RPC_CreateObject
@@ -8938,7 +8938,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 			return 1;
 		#endif
 	}
-	
+
 	#if defined _ALS_OnOutcomingRPC
 		#undef OnOutcomingRPC
 	#else
