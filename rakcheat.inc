@@ -8439,7 +8439,8 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				if(ac_fData[PR_quaternion][0] != ac_fData[PR_quaternion][0] ||
 				ac_fData[PR_quaternion][1] != ac_fData[PR_quaternion][1] ||
 				ac_fData[PR_quaternion][2] != ac_fData[PR_quaternion][2] ||
-				ac_fData[PR_quaternion][3] != ac_fData[PR_quaternion][3]) return 0;
+				ac_fData[PR_quaternion][3] != ac_fData[PR_quaternion][3] ||
+				(ac_fData[PR_quaternion][0] == 0.0 && ac_fData[PR_quaternion][1] == 0.0 && ac_fData[PR_quaternion][2] == 0.0 && ac_fData[PR_quaternion][3] == 0.0)) return 0;
 				new Float:ac_zAngle = atan2(2.0 * ((ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][3]) + (ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][1])),
 				(ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][0]) - (ac_fData[PR_quaternion][1] * ac_fData[PR_quaternion][1]) -
 				(ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][2]) + (ac_fData[PR_quaternion][3] * ac_fData[PR_quaternion][3]));
