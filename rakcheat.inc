@@ -833,6 +833,7 @@ enum acInfo
 	acLastPackets,
 	acPacketsTick,
 	acPackets,
+	acLastCameraMode,
 	acSpeed,
 	acHealth,
 	acArmour,
@@ -8408,6 +8409,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						}
 					}
 				}
+				ACInfo[playerid][acLastCameraMode] = ac_aData[PR_camMode];
 				BS_ResetReadPointer(bs);
 			}
 			case 206:
@@ -8440,7 +8442,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				ac_fData[PR_quaternion][1] != ac_fData[PR_quaternion][1] ||
 				ac_fData[PR_quaternion][2] != ac_fData[PR_quaternion][2] ||
 				ac_fData[PR_quaternion][3] != ac_fData[PR_quaternion][3] ||
-				(ac_fData[PR_quaternion][0] == 0.0 && ac_fData[PR_quaternion][1] == 0.0 && ac_fData[PR_quaternion][2] == 0.0 && ac_fData[PR_quaternion][3] == 0.0)) return 0;
+				(ac_fData[PR_weaponId] == 40 && ACInfo[playerid][acLastCameraMode] != 4)) return 0;
 				new Float:ac_zAngle = atan2(2.0 * ((ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][3]) + (ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][1])),
 				(ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][0]) - (ac_fData[PR_quaternion][1] * ac_fData[PR_quaternion][1]) -
 				(ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][2]) + (ac_fData[PR_quaternion][3] * ac_fData[PR_quaternion][3]));
