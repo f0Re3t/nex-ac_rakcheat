@@ -8471,7 +8471,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				if(ACInfo[playerid][acACAllow][7] && ACInfo[playerid][acSet][7] == -1)
 				{
 					new Float:ac_zDiff = ac_fData[PR_position][2] - ACInfo[playerid][acPosZ];
-					if((floatabs(ac_fData[PR_quaternion][1]) > 0.001 || floatabs(ac_fData[PR_quaternion][2]) > 0.001) &&
+					if((floatabs(ac_fData[PR_quaternion][1]) > 0.01 || floatabs(ac_fData[PR_quaternion][2]) > 0.01) &&
 					ac_fData[PR_weaponId] != WEAPON_PARACHUTE && ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE &&
 					ACInfo[playerid][acEnterVeh] == 0)
 					{
