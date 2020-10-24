@@ -833,13 +833,13 @@ enum acInfo
 	acLastPackets,
 	acPacketsTick,
 	acPackets,
-	acLastCameraMode,
 	acSpeed,
 	acHealth,
 	acArmour,
 	acMoney,
 	acShotWeapon,
 	acHoldWeapon,
+	acLastWeapon,
 	acEnterSeat,
 	acEnterVeh,
 	acKickVeh,
@@ -3692,6 +3692,7 @@ public OnPlayerConnect(playerid)
 		ACInfo[playerid][acCheatCount][25] =
 		ACInfo[playerid][acCheatCount][0] =
 		ACInfo[playerid][acHoldWeapon] =
+		ACInfo[playerid][acLastWeapon] =
 		ACInfo[playerid][acSpawnRes] =
 		ACInfo[playerid][acMoney] =
 		ACInfo[playerid][acAnim] =
@@ -3886,6 +3887,7 @@ public OnPlayerSpawn(playerid)
 		ACInfo[playerid][acCheatCount][26] =
 		ACInfo[playerid][acLastSpecAct] =
 		ACInfo[playerid][acHoldWeapon] =
+		ACInfo[playerid][acLastWeapon] =
 		ACInfo[playerid][acParachute] =
 		ACInfo[playerid][acEnterVeh] =
 		ACInfo[playerid][acShotWeapon] =
@@ -5879,6 +5881,7 @@ public OnPlayerUpdate(playerid)
 			}
 			ACInfo[playerid][acVeh] = ac_vehid;
 			if(ac_gtc - ACInfo[playerid][acGtc][6] > ac_gpp) ACInfo[playerid][acHoldWeapon] = ac_w;
+			ACInfo[playerid][acLastWeapon] = ac_w;
 			ACInfo[playerid][acPosX] = ac_pX;
 			ACInfo[playerid][acPosY] = ac_pY;
 			ACInfo[playerid][acPosZ] = ac_pZ;
@@ -8370,6 +8373,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				new ac_aData[PR_AimSync];
 				BS_IgnoreBits(bs, 8);
 				BS_ReadAimSync(bs, ac_aData);
+				if(ACInfo[playerid][acLastWeapon] == 40 && ac_aData[PR_camMode] != 4) return 0;
 				if(ac_aData[PR_aimZ] != ac_aData[PR_aimZ])
 				{
 					ac_aData[PR_aimZ] = 0.0;
@@ -8409,7 +8413,6 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						}
 					}
 				}
-				ACInfo[playerid][acLastCameraMode] = ac_aData[PR_camMode];
 				BS_ResetReadPointer(bs);
 			}
 			case 206:
@@ -8441,8 +8444,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				if(ac_fData[PR_quaternion][0] != ac_fData[PR_quaternion][0] ||
 				ac_fData[PR_quaternion][1] != ac_fData[PR_quaternion][1] ||
 				ac_fData[PR_quaternion][2] != ac_fData[PR_quaternion][2] ||
-				ac_fData[PR_quaternion][3] != ac_fData[PR_quaternion][3] ||
-				(ac_fData[PR_weaponId] == 40 && ACInfo[playerid][acLastCameraMode] != 4)) return 0;
+				ac_fData[PR_quaternion][3] != ac_fData[PR_quaternion][3]) return 0;
 				new Float:ac_zAngle = atan2(2.0 * ((ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][3]) + (ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][1])),
 				(ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][0]) - (ac_fData[PR_quaternion][1] * ac_fData[PR_quaternion][1]) -
 				(ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][2]) + (ac_fData[PR_quaternion][3] * ac_fData[PR_quaternion][3]));
