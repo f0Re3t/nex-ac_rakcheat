@@ -7921,7 +7921,25 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 		ac_dist = GetVehicleDistanceFromPoint(vehicleid, new_x, new_y, new_z);
 		if(passenger_seat > 0)
 		{
-			new Float:ac_zDiff = new_z - ac_z;
+			new Float:ac_zDiff;
+			if(ACInfo[playerid][acACAllow][53])
+			{
+				ac_zDiff = GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], new_z);
+				if(ac_zDiff >= AC_STREAM_DISTANCE)
+				{
+					#if defined DEBUG
+						printf("[Nex-AC debug] Dist: %f, acSet[7]: %d, pos x, y: %f, %f",
+						ac_zDiff, ACInfo[playerid][acSet][7], ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY]);
+					#endif
+					#if defined OnCheatDetected
+						ac_KickWithCode(playerid, "", 0, 53, 3);
+						if(ACInfo[playerid][acKicked] > 0) return 0;
+					#else
+						return ac_KickWithCode(playerid, "", 0, 53, 3);
+					#endif
+				}
+			}
+			ac_zDiff = new_z - ac_z;
 			#if defined OnTrailerUpdate
 			if(ACInfo[playerid][acACAllow][31] &&
 			((vel_z > ACVehInfo[vehicleid][acVelZ] || ac_zDiff >= -0.8) &&
@@ -8016,23 +8034,6 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				#endif
 			}
 			#endif
-			if(ACInfo[playerid][acACAllow][53])
-			{
-				ac_zDiff = GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], new_z);
-				if(ac_zDiff >= AC_STREAM_DISTANCE)
-				{
-					#if defined DEBUG
-						printf("[Nex-AC debug] Dist: %f, acSet[7]: %d, pos x, y: %f, %f, max dist: %f",
-						ac_zDiff, ACInfo[playerid][acSet][7], ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], AC_STREAM_DISTANCE);
-					#endif
-					#if defined OnCheatDetected
-						ac_KickWithCode(playerid, "", 0, 53, 3);
-						if(ACInfo[playerid][acKicked] > 0) return 0;
-					#else
-						return ac_KickWithCode(playerid, "", 0, 53, 3);
-					#endif
-				}
-			}
 		}
 		if(ACInfo[playerid][acACAllow][5] &&
 		(ac_dist >= 25.0 || ac_dist >= 15.0 && ac_gtc - ACInfo[playerid][acGtc][15] > ac_gpp) &&
@@ -8080,7 +8081,25 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 		ac_dist = GetVehicleDistanceFromPoint(vehicleid, ACVehInfo[vehicleid][acPosX], ACVehInfo[vehicleid][acPosY], ACVehInfo[vehicleid][acPosZ]);
 		if(passenger_seat > 0)
 		{
-			new Float:ac_zDiff = ac_z - ACVehInfo[vehicleid][acPosZ];
+			new Float:ac_zDiff;
+			if(ACInfo[playerid][acACAllow][53])
+			{
+				ac_zDiff = GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], ac_z);
+				if(ac_zDiff >= AC_STREAM_DISTANCE)
+				{
+					#if defined DEBUG
+						printf("[Nex-AC debug] Dist: %f, acSet[7]: %d, pos x, y: %f, %f",
+						ac_zDiff, ACInfo[playerid][acSet][7], ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY]);
+					#endif
+					#if defined OnCheatDetected
+						ac_KickWithCode(playerid, "", 0, 53, 3);
+						if(ACInfo[playerid][acKicked] > 0) return 0;
+					#else
+						return ac_KickWithCode(playerid, "", 0, 53, 3);
+					#endif
+				}
+			}
+			ac_zDiff = ac_z - ACVehInfo[vehicleid][acPosZ];
 			if(ACInfo[playerid][acACAllow][31] && ac_zDiff >= -5.0 &&
 			(floatabs(ac_x - ACVehInfo[vehicleid][acPosX]) >= 8.0 || floatabs(ac_y - ACVehInfo[vehicleid][acPosY]) >= 8.0))
 			{
@@ -8101,23 +8120,6 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				#if defined OnCheatWarning
 					else OnCheatWarning(playerid, "", 0, 31, 1, ACInfo[playerid][acCheatCount][4]);
 				#endif
-			}
-			if(ACInfo[playerid][acACAllow][53])
-			{
-				ac_zDiff = GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], new_z);
-				if(ac_zDiff >= AC_STREAM_DISTANCE)
-				{
-					#if defined DEBUG
-						printf("[Nex-AC debug] Dist: %f, acSet[7]: %d, pos x, y: %f, %f, max dist: %f",
-						ac_zDiff, ACInfo[playerid][acSet][7], ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], AC_STREAM_DISTANCE);
-					#endif
-					#if defined OnCheatDetected
-						ac_KickWithCode(playerid, "", 0, 53, 3);
-						if(ACInfo[playerid][acKicked] > 0) return 0;
-					#else
-						return ac_KickWithCode(playerid, "", 0, 53, 3);
-					#endif
-				}
 			}
 		}
 		#if defined VectorSize
