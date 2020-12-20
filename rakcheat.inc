@@ -249,7 +249,7 @@
 #endif
 
 #if !defined AC_MAX_QUATERN_VEH_WARNINGS
-	#define AC_MAX_QUATERN_VEH_WARNINGS		4
+	#define AC_MAX_QUATERN_VEH_WARNINGS		6
 #endif
 
 #if !defined AC_MAX_SURF_WARNINGS
@@ -8366,7 +8366,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					{
 						#undef AC_MAX_QUATERN_VEH_WARNINGS
 						#if defined DEBUG
-							printf("[Nex-AC debug] Quaternion w, x, y, z: %f, %f, %f, %f, last angle: %f, diff angle: %f",
+							printf("[Nex-AC debug] Quaternion w, x, y, z: %f, %f, %f, %f, last angle: %f, angle diff: %f",
 							ac_cData[PR_quaternion][0], ac_cData[PR_quaternion][1], ac_cData[PR_quaternion][2], ac_cData[PR_quaternion][3], ACInfo[playerid][acQuaternion], ac_zDiff);
 						#endif
 						#if defined OnCheatDetected
@@ -8481,10 +8481,11 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				ac_fData[PR_quaternion][1] != ac_fData[PR_quaternion][1] ||
 				ac_fData[PR_quaternion][2] != ac_fData[PR_quaternion][2] ||
 				ac_fData[PR_quaternion][3] != ac_fData[PR_quaternion][3]) return 0;
-				new Float:ac_zAngle = atan2(2.0 * ((ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][3]) + (ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][1])),
+				new Float:ac_zAngle;
+				if(ACInfo[playerid][acACAllow][25] && ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE &&
+				(ac_zAngle = floatabs(atan2(2.0 * ((ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][3]) + (ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][1])),
 				(ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][0]) - (ac_fData[PR_quaternion][1] * ac_fData[PR_quaternion][1]) -
-				(ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][2]) + (ac_fData[PR_quaternion][3] * ac_fData[PR_quaternion][3]));
-				if(ACInfo[playerid][acACAllow][25] && (ac_zAngle = floatabs(ac_zAngle)) > 85.0 && ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE)
+				(ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][2]) + (ac_fData[PR_quaternion][3] * ac_fData[PR_quaternion][3])))) > 85.0)
 				{
 					if(++ACInfo[playerid][acCheatCount][22] > AC_MAX_QUATERN_WARNINGS)
 					{
@@ -8509,6 +8510,11 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				if(ACInfo[playerid][acACAllow][7] && ACInfo[playerid][acSet][7] == -1)
 				{
 					new Float:ac_zDiff = ac_fData[PR_position][2] - ACInfo[playerid][acPosZ];
+					#if defined VectorSize
+						ac_zAngle = VectorSize(ac_fData[PR_position][0] - ACInfo[playerid][acPosX], ac_fData[PR_position][1] - ACInfo[playerid][acPosY], 0.0);
+					#else
+						ac_zAngle = floatsqroot(floatpower(ac_fData[PR_position][0] - ACInfo[playerid][acPosX], 2.0) + floatpower(ac_fData[PR_position][1] - ACInfo[playerid][acPosY], 2.0));
+					#endif
 					if((floatabs(ac_fData[PR_quaternion][1]) > 0.01 || floatabs(ac_fData[PR_quaternion][2]) > 0.01) &&
 					ac_fData[PR_weaponId] != WEAPON_PARACHUTE && ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE &&
 					ACInfo[playerid][acEnterVeh] == 0)
@@ -8529,7 +8535,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						else if(ac_zDiff >= 1.0)
 						{
 							#if defined DEBUG
-								printf("[Nex-AC debug] Quaternion x, y: %f, %f, weaponid: %d, spec act: %d, anim: %d, pos z: %f, last pos z: %f, pos diff: %f",
+								printf("[Nex-AC debug] Quaternion x, y: %f, %f, weaponid: %d, spec act: %d, anim: %d, pos z: %f, last pos z: %f, dist: %f",
 								ac_fData[PR_quaternion][1], ac_fData[PR_quaternion][2], ac_fData[PR_weaponId], ac_fData[PR_specialAction],
 								ac_fData[PR_animationId], ac_fData[PR_position][2], ACInfo[playerid][acPosZ], ac_zAngle);
 							#endif
@@ -8541,11 +8547,6 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 							#endif
 						}
 					}
-					#if defined VectorSize
-						ac_zAngle = VectorSize(ac_fData[PR_position][0] - ACInfo[playerid][acPosX], ac_fData[PR_position][1] - ACInfo[playerid][acPosY], 0.0);
-					#else
-						ac_zAngle = floatsqroot(floatpower(ac_fData[PR_position][0] - ACInfo[playerid][acPosX], 2.0) + floatpower(ac_fData[PR_position][1] - ACInfo[playerid][acPosY], 2.0));
-					#endif
 					if(ac_zAngle >= 1.0 && ac_fData[PR_surfingVehicleId] == 0 && (ac_fData[PR_velocity][2] > 0.0 && ac_zDiff <= -2.0 || ac_fData[PR_velocity][2] < 0.0 && ac_zDiff >= 2.0 ||
 					(ac_fData[PR_animationId] == 1130 || ac_fData[PR_animationId] == 1132) && ac_zDiff >= 2.0 || ac_zDiff == 0.0 && ac_fData[PR_velocity][2] != 0.0 && ac_fData[PR_velocity][2] >= ACInfo[playerid][acVelZ]))
 					{
