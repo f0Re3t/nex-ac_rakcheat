@@ -8389,10 +8389,10 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 					#endif
 				}
 				new Float:ac_zDiff, ac_gtc = GetTickCount(), ac_gpp = GetPlayerPing(playerid),
-				Float:ac_zAngle = atan2(2.0 * ((ac_cData[PR_quaternion][2] * ac_cData[PR_quaternion][3]) + (ac_cData[PR_quaternion][0] * ac_cData[PR_quaternion][1])),
+				Float:ac_zAngle = floatabs(atan2(2.0 * ((ac_cData[PR_quaternion][2] * ac_cData[PR_quaternion][3]) + (ac_cData[PR_quaternion][0] * ac_cData[PR_quaternion][1])),
 				(ac_cData[PR_quaternion][0] * ac_cData[PR_quaternion][0]) - (ac_cData[PR_quaternion][1] * ac_cData[PR_quaternion][1]) -
-				(ac_cData[PR_quaternion][2] * ac_cData[PR_quaternion][2]) + (ac_cData[PR_quaternion][3] * ac_cData[PR_quaternion][3]));
-				if(ACInfo[playerid][acACAllow][25] && (ac_zDiff = floatabs(ac_zAngle - ACInfo[playerid][acQuaternion])) > 90.0 &&
+				(ac_cData[PR_quaternion][2] * ac_cData[PR_quaternion][2]) + (ac_cData[PR_quaternion][3] * ac_cData[PR_quaternion][3])));
+				if(ACInfo[playerid][acACAllow][25] && (ac_zDiff = (ac_zAngle - ACInfo[playerid][acQuaternion])) > 90.0 &&
 				ac_gtc - ACInfo[playerid][acGtc][19] > ac_gpp)
 				{
 					if(++ACInfo[playerid][acCheatCount][22] > AC_MAX_QUATERN_VEH_WARNINGS)
