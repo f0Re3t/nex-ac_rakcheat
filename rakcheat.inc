@@ -837,6 +837,7 @@ enum acInfo
 	acLastPackets,
 	acPacketsTick,
 	acPackets,
+	acLastCamMode,
 	acSpeed,
 	acHealth,
 	acArmour,
@@ -8443,12 +8444,6 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				BS_IgnoreBits(bs, 8);
 				BS_ReadAimSync(bs, ac_aData);
 				if(ACInfo[playerid][acLastWeapon] == WEAPON_BOMB && ac_aData[PR_camMode] != 4) return 0;
-				if(ac_aData[PR_aimZ] != ac_aData[PR_aimZ])
-				{
-					ac_aData[PR_aimZ] = 0.0;
-					BS_SetWriteOffset(bs, 8);
-					BS_WriteAimSync(bs, ac_aData);
-				}
 				if(ACInfo[playerid][acACAllow][47])
 				{
 					if(!(0 <= ac_aData[PR_camMode] <= 65))
@@ -8482,6 +8477,13 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						}
 					}
 				}
+				if(ac_aData[PR_aimZ] != ac_aData[PR_aimZ])
+				{
+					ac_aData[PR_aimZ] = 0.0;
+					BS_SetWriteOffset(bs, 8);
+					BS_WriteAimSync(bs, ac_aData);
+				}
+				ACInfo[playerid][acLastCamMode] = ac_aData[PR_camMode];
 				BS_ResetReadPointer(bs);
 			}
 			case 206:
@@ -8832,6 +8834,12 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				ac_fData[PR_surfingOffsets][2] == 0.0)
 				{
 					ac_fData[PR_surfingVehicleId] = 0;
+					BS_SetWriteOffset(bs, 8);
+					BS_WriteOnFootSync(bs, ac_fData);
+				}
+				if(ac_fData[PR_weaponId] == WEAPON_BOMB && ACInfo[playerid][acLastCamMode] != 4)
+				{
+					ac_fData[PR_weaponId] = 0;
 					BS_SetWriteOffset(bs, 8);
 					BS_WriteOnFootSync(bs, ac_fData);
 				}
