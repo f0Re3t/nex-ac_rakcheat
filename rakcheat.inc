@@ -1198,7 +1198,7 @@ ac_fpublic ac_CreatePickup(pickupid, modelid, type, Float:ac_X, Float:ac_Y, Floa
 	stock ac_GetPlayerFacingAngle(playerid, &Float:ang)
 	{
 		if(!GetPlayerFacingAngle(playerid, ang)) return 0;
-		if(ang != ang) ang = 0.0;
+		if(!ac_IsValidFloat(ang)) ang = 0.0;
 		ang = ac_AbsoluteAngle(ang);
 		return 1;
 	}
@@ -1213,7 +1213,7 @@ ac_fpublic ac_CreatePickup(pickupid, modelid, type, Float:ac_X, Float:ac_Y, Floa
 	stock ac_GetVehicleZAngle(vehicleid, &Float:z_angle)
 	{
 		if(!GetVehicleZAngle(vehicleid, z_angle)) return 0;
-		if(z_angle != z_angle) z_angle = 0.0;
+		if(!ac_IsValidFloat(z_angle)) z_angle = 0.0;
 		z_angle = ac_AbsoluteAngle(z_angle);
 		#undef ac_AbsoluteAngle
 		return 1;
@@ -5203,7 +5203,7 @@ public OnPlayerUpdate(playerid)
 							}
 						}
 						else if(ACInfo[playerid][acACAllow][11] &&
-						(ac_vHealth != ac_vHealth || ac_vHealth > ACVehInfo[ac_vehid][acHealth] &&
+						(!ac_IsValidFloat(ac_vHealth) || ac_vHealth > ACVehInfo[ac_vehid][acHealth] &&
 						!ACInfo[playerid][acModShop] && ac_vHealth))
 						{
 							#if AC_USE_PAYNSPRAY
@@ -8373,10 +8373,8 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				new ac_cData[PR_InCarSync];
 				BS_IgnoreBits(bs, 8);
 				BS_ReadInCarSync(bs, ac_cData);
-				if(ac_cData[PR_quaternion][0] != ac_cData[PR_quaternion][0] ||
-				ac_cData[PR_quaternion][1] != ac_cData[PR_quaternion][1] ||
-				ac_cData[PR_quaternion][2] != ac_cData[PR_quaternion][2] ||
-				ac_cData[PR_quaternion][3] != ac_cData[PR_quaternion][3]) return 0;
+				if(!ac_IsValidFloat(ac_cData[PR_quaternion][0]) || !ac_IsValidFloat(ac_cData[PR_quaternion][1]) ||
+				!ac_IsValidFloat(ac_cData[PR_quaternion][2]) || !ac_IsValidFloat(ac_cData[PR_quaternion][3])) return 0;
 				if(ACInfo[playerid][acACAllow][44] && !(1 <= ac_cData[PR_vehicleId] < MAX_VEHICLES))
 				{
 					#if defined DEBUG
@@ -8429,7 +8427,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						return ac_KickWithCode(playerid, "", 0, 3, 5);
 					#endif
 				}
-				if(ac_cData[PR_trainSpeed] != ac_cData[PR_trainSpeed])
+				if(!ac_IsValidFloat(ac_cData[PR_trainSpeed]))
 				{
 					ac_cData[PR_trainSpeed] = 0.0;
 					BS_SetWriteOffset(bs, 8);
@@ -8477,7 +8475,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						}
 					}
 				}
-				if(ac_aData[PR_aimZ] != ac_aData[PR_aimZ])
+				if(!ac_IsValidFloat(ac_aData[PR_aimZ]))
 				{
 					ac_aData[PR_aimZ] = 0.0;
 					BS_SetWriteOffset(bs, 8);
@@ -8512,10 +8510,8 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				new ac_fData[PR_OnFootSync];
 				BS_IgnoreBits(bs, 8);
 				BS_ReadOnFootSync(bs, ac_fData);
-				if(ac_fData[PR_quaternion][0] != ac_fData[PR_quaternion][0] ||
-				ac_fData[PR_quaternion][1] != ac_fData[PR_quaternion][1] ||
-				ac_fData[PR_quaternion][2] != ac_fData[PR_quaternion][2] ||
-				ac_fData[PR_quaternion][3] != ac_fData[PR_quaternion][3]) return 0;
+				if(!ac_IsValidFloat(ac_fData[PR_quaternion][0]) || !ac_IsValidFloat(ac_fData[PR_quaternion][1]) ||
+				!ac_IsValidFloat(ac_fData[PR_quaternion][2]) || !ac_IsValidFloat(ac_fData[PR_quaternion][3])) return 0;
 				new Float:ac_zAngle;
 				if(ACInfo[playerid][acACAllow][25] && ac_fData[PR_specialAction] == SPECIAL_ACTION_NONE &&
 				(ac_zAngle = floatabs(atan2(2.0 * ((ac_fData[PR_quaternion][2] * ac_fData[PR_quaternion][3]) + (ac_fData[PR_quaternion][0] * ac_fData[PR_quaternion][1])),
@@ -8818,9 +8814,8 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						return ac_KickWithCode(playerid, "", 0, 24, 2);
 					#endif
 				}
-				if(ac_fData[PR_surfingOffsets][0] != ac_fData[PR_surfingOffsets][0] ||
-				ac_fData[PR_surfingOffsets][1] != ac_fData[PR_surfingOffsets][1] ||
-				ac_fData[PR_surfingOffsets][2] != ac_fData[PR_surfingOffsets][2])
+				if(!ac_IsValidFloat(ac_fData[PR_surfingOffsets][0]) ||
+				!ac_IsValidFloat(ac_fData[PR_surfingOffsets][1]) || !ac_IsValidFloat(ac_fData[PR_surfingOffsets][2]))
 				{
 					ac_fData[PR_surfingOffsets][0] =
 					ac_fData[PR_surfingOffsets][1] =
@@ -8861,7 +8856,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				ac_uData[PR_angularVelocity][0] != ac_uData[PR_angularVelocity][0] ||
 				ac_uData[PR_angularVelocity][1] != ac_uData[PR_angularVelocity][1] ||
 				ac_uData[PR_angularVelocity][2] != ac_uData[PR_angularVelocity][2] ||
-				ac_uData[PR_vehicleHealth] != ac_uData[PR_vehicleHealth] ||
+				!ac_IsValidFloat(ac_uData[PR_vehicleHealth]) ||
 				floatabs(ac_uData[PR_roll][0]) >= 1.0 ||
 				floatabs(ac_uData[PR_roll][1]) >= 1.0 ||
 				floatabs(ac_uData[PR_roll][2]) >= 1.0 ||
@@ -8886,7 +8881,9 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 				BS_IgnoreBits(bs, 8);
 				BS_ReadTrailerSync(bs, ac_tData);
 				trailerid = ac_tData[PR_trailerId];
-				if(!(1 <= trailerid < MAX_VEHICLES) || ACVehInfo[trailerid][acDriver] != INVALID_PLAYER_ID) return 0;
+				if(!(1 <= trailerid < MAX_VEHICLES) || ACVehInfo[trailerid][acDriver] != INVALID_PLAYER_ID ||
+				!ac_IsValidFloat(ac_tData[PR_quaternion][0]) || !ac_IsValidFloat(ac_tData[PR_quaternion][1]) ||
+				!ac_IsValidFloat(ac_tData[PR_quaternion][2]) || !ac_IsValidFloat(ac_tData[PR_quaternion][3])) return 0;
 				if(ACInfo[playerid][acACAllow][31] &&
 				(floatabs(ac_tData[PR_velocity][0]) - floatabs(ACVehInfo[trailerid][acVelX]) >= 3.0 ||
 				floatabs(ac_tData[PR_velocity][1]) - floatabs(ACVehInfo[trailerid][acVelY]) >= 3.0 ||
@@ -9763,6 +9760,8 @@ static ac_IsValidDamageReason(weaponid) return (0 <= weaponid <= 18 || 22 <= wea
 static ac_IsValidWeapon(weaponid) return (0 <= weaponid <= 18 || 22 <= weaponid <= 46);
 
 static ac_IsBulletWeapon(weaponid) return (weaponid == 38 || 22 <= weaponid <= 34);
+
+static ac_IsValidFloat(Float:value) return (value == value && value != Float:0x7F800000 && value != Float:0xFF800000);
 
 #if defined VectorSize
 	static ac_GetSpeed(Float:ac_x, Float:ac_y, Float:ac_z = 0.0) return floatround(VectorSize(ac_x, ac_y, ac_z) * 179.28625);
