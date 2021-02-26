@@ -835,7 +835,6 @@ enum acInfo
 	Float:acSetPosZ,
 	Float:acQuaternion,
 	acLastPackets,
-	acPacketsTick,
 	acPackets,
 	acLastCamMode,
 	acSpeed,
@@ -3713,7 +3712,6 @@ public OnPlayerConnect(playerid)
 		ACInfo[playerid][acAnim] =
 		ACInfo[playerid][acPackets] =
 		ACInfo[playerid][acLastPackets] =
-		ACInfo[playerid][acPacketsTick] =
 		ACInfo[playerid][acInt] = 0;
 		ACInfo[playerid][acSet][11] =
 		ACInfo[playerid][acSet][10] =
@@ -9396,8 +9394,8 @@ ac_fpublic ac_Timer(playerid)
 			if(ACInfo[playerid][acACAllow][51])
 			{
 				ac_s = ACInfo[playerid][acPackets] - ACInfo[playerid][acLastPackets];
-				ac_t = ACInfo[playerid][acLastPackets] > 0 ? (ac_gtc - ACInfo[playerid][acPacketsTick]) / ACInfo[playerid][acLastPackets] : -1;
-				if(ACInfo[playerid][acPackets] >= 30 && ac_t != -1 && (ac_t + ac_s) <= 30 && ac_s >= 5)
+				ac_t = ACInfo[playerid][acLastPackets] > 0 ? (ac_gtc - ACInfo[playerid][acTimerTick]) / ACInfo[playerid][acLastPackets] : -1;
+				if(ACInfo[playerid][acPackets] >= 30 && ac_t != -1 && (ac_t + ac_s) <= 30 && ac_s >= 18)
 				{
 					ACInfo[playerid][acCheatCount][25] += (1 * AC_PACKETS_RESET_DELAY);
 					if(ACInfo[playerid][acCheatCount][25] > AC_MAX_PACKETS_WARNINGS)
@@ -9418,7 +9416,6 @@ ac_fpublic ac_Timer(playerid)
 					#undef AC_PACKETS_RESET_DELAY
 				}
 				ACInfo[playerid][acLastPackets] = ACInfo[playerid][acPackets];
-				ACInfo[playerid][acPacketsTick] = ac_gtc;
 				ACInfo[playerid][acPackets] = 0;
 			}
 			ac_t = orig_GetPlayerMoney(playerid);
