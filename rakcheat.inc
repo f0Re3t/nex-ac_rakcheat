@@ -5312,9 +5312,9 @@ public OnPlayerUpdate(playerid)
 								}
 							}
 						}
+						ac_i = GetVehicleModel(ac_vehid);
 						if(ac_gtc - ACInfo[playerid][acGtc][8] > ac_gpp)
 						{
-							ac_i = GetVehicleModel(ac_vehid);
 							new ac_spDiff = ac_vsp - ACVehInfo[ac_vehid][acSpeed];
 							if(ACInfo[playerid][acACAllow][10])
 							{
