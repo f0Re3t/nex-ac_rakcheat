@@ -5421,6 +5421,21 @@ public OnPlayerUpdate(playerid)
 							}
 							ACVehInfo[ac_vehid][acSpeedDiff] = ac_spDiff;
 						}
+						else
+						{
+							if(ac_vsp <= (ACVehInfo[ac_vehid][acSpeed] + ACVehInfo[ac_vehid][acSpeed] * 0.1)) ACInfo[playerid][acGtc][8] = 0;
+							else if(ACInfo[playerid][acACAllow][10] && ac_vsp > ACVehInfo[ac_vehid][acSpeed] && ac_gtc - ACInfo[playerid][acGtc][1] > ac_gpp)
+							{
+								#if defined DEBUG
+									printf("[Nex-AC debug] Speed: %d, old speed: %d, veh model: %d, veh: %d",
+									ac_vsp, ACVehInfo[ac_vehid][acSpeed], ac_i, ac_vehid);
+								#endif
+								#if defined OnCheatDetected
+									ac_KickWithCode(playerid, "", 0, 10, 5);
+								#endif
+								return 0;
+							}
+						}
 						ACVehInfo[ac_vehid][acPosX] = ac_pX;
 						ACVehInfo[ac_vehid][acPosY] = ac_pY;
 						ACVehInfo[ac_vehid][acPosZ] = ac_pZ;
@@ -5817,6 +5832,20 @@ public OnPlayerUpdate(playerid)
 							}
 							ACInfo[playerid][acSpeed] = ac_s;
 							ACInfo[playerid][acVelZ] = ac_vZ;
+						}
+						else
+						{
+							if(ac_s <= (ACInfo[playerid][acSpeed] + ACInfo[playerid][acSpeed] * 0.1)) ACInfo[playerid][acGtc][9] = 0;
+							else if(ACInfo[playerid][acACAllow][9] && ac_s > ACInfo[playerid][acSpeed])
+							{
+								#if defined DEBUG
+									printf("[Nex-AC debug] Speed: %d, old speed: %d", ac_s, ACInfo[playerid][acSpeed]);
+								#endif
+								#if defined OnCheatDetected
+									ac_KickWithCode(playerid, "", 0, 9, 4);
+								#endif
+								return 0;
+							}
 						}
 					}
 					else
