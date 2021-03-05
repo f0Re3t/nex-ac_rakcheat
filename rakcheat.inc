@@ -5423,8 +5423,9 @@ public OnPlayerUpdate(playerid)
 						}
 						else
 						{
-							if(ac_vsp <= (ACVehInfo[ac_vehid][acSpeed] + ACVehInfo[ac_vehid][acSpeed] * 0.1)) ACInfo[playerid][acGtc][8] = 0;
-							else if(ACInfo[playerid][acACAllow][10] && ac_vsp > ACVehInfo[ac_vehid][acSpeed] && ac_gtc - ACInfo[playerid][acGtc][1] > ac_gpp)
+							if(ac_vsp <= ACVehInfo[ac_vehid][acSpeed] + floatround(ACVehInfo[ac_vehid][acSpeed] * 0.8)) ACInfo[playerid][acGtc][8] = 0;
+							else if(ACInfo[playerid][acACAllow][10] && ac_vsp > ACVehInfo[ac_vehid][acSpeed] + 40 &&
+							ac_gtc - ACInfo[playerid][acGtc][1] > ac_gpp)
 							{
 								#if defined DEBUG
 									printf("[Nex-AC debug] Speed: %d, old speed: %d, veh model: %d, veh: %d",
@@ -5835,8 +5836,8 @@ public OnPlayerUpdate(playerid)
 						}
 						else
 						{
-							if(ac_s <= (ACInfo[playerid][acSpeed] + ACInfo[playerid][acSpeed] * 0.1)) ACInfo[playerid][acGtc][9] = 0;
-							else if(ACInfo[playerid][acACAllow][9] && ac_s > ACInfo[playerid][acSpeed])
+							if(ac_s <= ACInfo[playerid][acSpeed] + floatround(ACInfo[playerid][acSpeed] * 0.3)) ACInfo[playerid][acGtc][9] = 0;
+							else if(ACInfo[playerid][acACAllow][9] && ac_s > ACInfo[playerid][acSpeed] + 30)
 							{
 								#if defined DEBUG
 									printf("[Nex-AC debug] Speed: %d, old speed: %d", ac_s, ACInfo[playerid][acSpeed]);
