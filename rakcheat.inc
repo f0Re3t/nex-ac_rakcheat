@@ -5426,13 +5426,14 @@ public OnPlayerUpdate(playerid)
 								}
 							}
 							ACVehInfo[ac_vehid][acSpeedDiff] = ac_spDiff;
+							ACVehInfo[ac_vehid][acSpeed] = ac_vsp;
 						}
 						else if(ACInfo[playerid][acSetSpeed])
 						{
-							if(ac_abs(ac_spDiff) <= floatround(ACVehInfo[ac_vehid][acSpeed] * 0.8))
+							if(ac_abs(ac_spDiff) <= ACVehInfo[ac_vehid][acSpeed])
 							{
 								ACInfo[playerid][acSetSpeed] = false;
-								ACVehInfo[ac_vehid][acSpeedDiff] = ac_spDiff;
+								ACVehInfo[ac_vehid][acSpeed] = ac_vsp;
 								ACInfo[playerid][acGtc][8] = 0;
 							}
 							else if(ACInfo[playerid][acACAllow][10] && ac_vsp > ACVehInfo[ac_vehid][acSpeed] + 60 &&
@@ -5445,18 +5446,20 @@ public OnPlayerUpdate(playerid)
 								#if defined OnCheatDetected
 									ac_KickWithCode(playerid, "", 0, 10, 5);
 									if(ACInfo[playerid][acKicked] > 0) return 0;
+									ACVehInfo[ac_vehid][acSpeed] = ac_vsp;
 								#else
 									return ac_KickWithCode(playerid, "", 0, 10, 5);
 								#endif
 							}
+							ACVehInfo[ac_vehid][acSpeedDiff] = ac_spDiff;
 						}
+						else ACVehInfo[ac_vehid][acSpeed] = ac_vsp;
 						ACVehInfo[ac_vehid][acPosX] = ac_pX;
 						ACVehInfo[ac_vehid][acPosY] = ac_pY;
 						ACVehInfo[ac_vehid][acPosZ] = ac_pZ;
 						ACVehInfo[ac_vehid][acVelX] = ac_vX;
 						ACVehInfo[ac_vehid][acVelY] = ac_vY;
 						ACVehInfo[ac_vehid][acVelZ] = ac_vZ;
-						ACVehInfo[ac_vehid][acSpeed] = ac_vsp;
 						ACVehInfo[ac_vehid][acPosDiff] = ac_dist;
 						if(ACInfo[playerid][acSetVehHealth] == -1.0) ACVehInfo[ac_vehid][acHealth] = ac_vHealth;
 						ACVehInfo[ac_vehid][acZAngle] = ac_zAngle;
@@ -5855,7 +5858,7 @@ public OnPlayerUpdate(playerid)
 								ACInfo[playerid][acGtc][9] = 0;
 								ACInfo[playerid][acSetSpeed] = false;
 							}
-							else if(ACInfo[playerid][acACAllow][9] && ac_s > ACInfo[playerid][acSpeed] + 30)
+							else if(ACInfo[playerid][acACAllow][9] && ac_s > ACInfo[playerid][acSpeed] + 40)
 							{
 								#if defined DEBUG
 									printf("[Nex-AC debug] Speed: %d, old speed: %d", ac_s, ACInfo[playerid][acSpeed]);
