@@ -5338,7 +5338,7 @@ public OnPlayerUpdate(playerid)
 										return ac_KickWithCode(playerid, "", 0, 10, 3);
 									#endif
 								}
-								else if(ac_spDiff >= 20 &&
+								else if(ac_spDiff >= 20 && !ACInfo[playerid][acSetSpeed] &&
 								ACVehInfo[ac_vehid][acSpeedDiff] <= ac_spDiff && ACVehInfo[ac_vehid][acHealth] <= ac_vHealth &&
 								!(ac_IsValidVehicleModel(ac_i) && (ac_spDiff < 65 && (ac_i == 432 || ac_i == 449 || ac_IsATrainLoco(ac_i)) ||
 								ac_spDiff < 45 && ac_IsABmx(ac_i) && floatabs(ac_vX) <= 0.76 && floatabs(ac_vY) <= 0.76 && floatabs(ac_vZ) <= 0.76 ||
@@ -5427,6 +5427,7 @@ public OnPlayerUpdate(playerid)
 							}
 							ACVehInfo[ac_vehid][acSpeedDiff] = ac_spDiff;
 							ACVehInfo[ac_vehid][acSpeed] = ac_vsp;
+							ACInfo[playerid][acSetSpeed] = false;
 						}
 						else if(ACInfo[playerid][acSetSpeed])
 						{
