@@ -834,7 +834,7 @@ enum acInfo
 	Float:acSetPosY,
 	Float:acSetPosZ,
 	Float:acQuaternion,
-	acOldSpeed
+	acOldSpeed,
 	acLastPackets,
 	acPackets,
 	acLastCamMode,
