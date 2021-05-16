@@ -8369,6 +8369,8 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 						#if defined DEBUG
 							printf("[Nex-AC debug] Quaternion w, x, y, z: %f, %f, %f, %f, last angle: %f, angle diff: %f",
 							ac_cData[PR_quaternion][0], ac_cData[PR_quaternion][1], ac_cData[PR_quaternion][2], ac_cData[PR_quaternion][3], ACInfo[playerid][acQuaternion], ac_zDiff);
+						#else
+							#pragma unused ac_zDiff
 						#endif
 						#if defined OnCheatDetected
 							ac_KickWithCode(playerid, "", 0, 25, 2);
