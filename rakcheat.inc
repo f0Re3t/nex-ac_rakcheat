@@ -1,4 +1,4 @@
-//Nex-AC by Nexius v1.9.59 (0.3.7)
+//Nex-AC by Nexius v1.9.60 (0.3.7)
 //Modification rakcheat by f0Re3t v2.0.8
 
 #if defined _nex_ac_included
@@ -27,7 +27,7 @@
 	#include <nex-ac_en.lang>	//Localization
 #endif
 
-#define	NEX_AC_VERSION				"1.9.59"
+#define	NEX_AC_VERSION				"1.9.60"
 #define	RAKCHEAT_MODULE_VERSION		"2.0.8"
 
 #define AC_SERVER_VERSION			"0.3.7"
@@ -1457,7 +1457,7 @@ ac_fpublic ac_GivePlayerWeapon(playerid, weaponid, ac_ammo)
 	{
 		new ac_s = ac_wSlot[weaponid];
 		ACInfo[playerid][acNOPCount][0] = ACInfo[playerid][acNOPCount][1] = 0;
-		if(ac_IsWeaponWithAmmo(weaponid))
+		if(ac_IsWeaponSlotWithAmmo(ac_s))
 		{
 			if(ac_IsAmmoSharingInSlot(ac_s) || (ACInfo[playerid][acSetWeapon][ac_s] == -1
 			? ACInfo[playerid][acWeapon][ac_s] : ACInfo[playerid][acSetWeapon][ac_s]) == weaponid)
@@ -1495,12 +1495,12 @@ ac_fpublic ac_GivePlayerWeapon(playerid, weaponid, ac_ammo)
 
 ac_fpublic ac_SetPlayerAmmo(playerid, weaponid, ac_ammo)
 {
-	if(ac_ammo < -32768) ac_ammo = -32768;
-	else if(ac_ammo > 32767) ac_ammo = 32767;
-	if(ac_IsWeaponWithAmmo(weaponid))
+	if(ac_IsValidWeapon(weaponid))
 	{
 		new ac_s = ac_wSlot[weaponid];
-		if((ACInfo[playerid][acSetWeapon][ac_s] == -1
+		if(ac_ammo < -32768) ac_ammo = -32768;
+		else if(ac_ammo > 32767) ac_ammo = 32767;
+		if(ac_IsWeaponSlotWithAmmo(ac_s) && (ACInfo[playerid][acSetWeapon][ac_s] == -1
 		? ACInfo[playerid][acWeapon][ac_s] : ACInfo[playerid][acSetWeapon][ac_s]) == weaponid)
 		{
 			ACInfo[playerid][acNOPCount][1] = 0;
@@ -5624,7 +5624,7 @@ public OnPlayerUpdate(playerid)
 									else OnCheatWarning(playerid, "", 0, 7, 3, ACInfo[playerid][acCheatCount][13]);
 								#endif
 							}
-							else
+							else if(ac_gtc - ACInfo[playerid][acGtc][9] > ac_gpp)
 							{
 								#if defined VectorSize
 									ac_tmp = VectorSize(ac_vX, ac_vY, 0.0);
@@ -8844,6 +8844,25 @@ public OnVehicleStreamIn(vehicleid, forplayerid)
 			#endif
 		}
 		else ACInfo[playerid][acCheatCount][22] = 0;
+		if(!ac_IsValidFloat(ac_fData[PR_surfingOffsets][0]) ||
+		!ac_IsValidFloat(ac_fData[PR_surfingOffsets][1]) ||
+		!ac_IsValidFloat(ac_fData[PR_surfingOffsets][2]))
+		{
+			ac_fData[PR_surfingOffsets][0] =
+			ac_fData[PR_surfingOffsets][1] =
+			ac_fData[PR_surfingOffsets][2] = 0.0;
+			ac_fData[PR_surfingVehicleId] = 0;
+			BS_SetWriteOffset(bs, 8);
+			BS_WriteOnFootSync(bs, ac_fData);
+		}
+		else if(ac_fData[PR_surfingVehicleId] != 0 &&
+		ac_fData[PR_surfingOffsets][0] == 0.0 && ac_fData[PR_surfingOffsets][1] == 0.0 &&
+		ac_fData[PR_surfingOffsets][2] == 0.0)
+		{
+			ac_fData[PR_surfingVehicleId] = 0;
+			BS_SetWriteOffset(bs, 8);
+			BS_WriteOnFootSync(bs, ac_fData);
+		}
 		new ac_gtc = GetTickCount(), ac_gpp = GetPlayerPing(playerid);
 		#if !defined IsPlayerDying
 		if(ACInfo[playerid][acACAllow][7] && ACInfo[playerid][acSet][7] == -1 &&
@@ -9138,22 +9157,11 @@ public OnVehicleStreamIn(vehicleid, forplayerid)
 				return ac_KickWithCode(playerid, "", 0, 24, 2);
 			#endif
 		}
-		if(!ac_IsValidFloat(ac_fData[PR_surfingOffsets][0]) ||
-		!ac_IsValidFloat(ac_fData[PR_surfingOffsets][1]) ||
-		!ac_IsValidFloat(ac_fData[PR_surfingOffsets][2]))
+		if(ac_fData[PR_specialAction] == SPECIAL_ACTION_ENTER_VEHICLE && ACInfo[playerid][acEnterVeh] == 0 ||
+		ac_fData[PR_specialAction] == SPECIAL_ACTION_EXIT_VEHICLE && ACInfo[playerid][acVeh] == 0 &&
+		ac_gtc - ACInfo[playerid][acGtc][15] > 1350)
 		{
-			ac_fData[PR_surfingOffsets][0] =
-			ac_fData[PR_surfingOffsets][1] =
-			ac_fData[PR_surfingOffsets][2] = 0.0;
-			ac_fData[PR_surfingVehicleId] = 0;
-			BS_SetWriteOffset(bs, 8);
-			BS_WriteOnFootSync(bs, ac_fData);
-		}
-		else if(ac_fData[PR_surfingVehicleId] != 0 &&
-		ac_fData[PR_surfingOffsets][0] == 0.0 && ac_fData[PR_surfingOffsets][1] == 0.0 &&
-		ac_fData[PR_surfingOffsets][2] == 0.0)
-		{
-			ac_fData[PR_surfingVehicleId] = 0;
+			ac_fData[PR_specialAction] = 0;
 			BS_SetWriteOffset(bs, 8);
 			BS_WriteOnFootSync(bs, ac_fData);
 		}
@@ -9179,6 +9187,12 @@ public OnVehicleStreamIn(vehicleid, forplayerid)
 		BS_ReadUnoccupiedSync(bs, ac_uData);
 		if(ac_uData[PR_seatId] > 0 && (ACInfo[playerid][acSeat] < 1 ||
 		ac_uData[PR_vehicleId] == ACInfo[playerid][acVeh] && ac_uData[PR_seatId] != ACInfo[playerid][acSeat]) ||
+		ac_uData[PR_roll][0] != ac_uData[PR_roll][0] ||
+		ac_uData[PR_roll][1] != ac_uData[PR_roll][1] ||
+		ac_uData[PR_roll][2] != ac_uData[PR_roll][2] ||
+		ac_uData[PR_direction][0] != ac_uData[PR_direction][0] ||
+		ac_uData[PR_direction][1] != ac_uData[PR_direction][1] ||
+		ac_uData[PR_direction][2] != ac_uData[PR_direction][2] ||
 		ac_uData[PR_angularVelocity][0] != ac_uData[PR_angularVelocity][0] ||
 		ac_uData[PR_angularVelocity][1] != ac_uData[PR_angularVelocity][1] ||
 		ac_uData[PR_angularVelocity][2] != ac_uData[PR_angularVelocity][2] ||
@@ -9517,7 +9531,7 @@ ac_fpublic ac_Timer(playerid)
 										ACInfo[playerid][acWeapon][ac_i] = ac_w;
 										ACInfo[playerid][acAmmo][ac_i] = ac_a;
 									}
-									else if(ACInfo[playerid][acACAllow][15] && (!ac_IsWeaponWithAmmo(ac_w) || ac_a != 0))
+									else if(ACInfo[playerid][acACAllow][15] && (!ac_IsWeaponSlotWithAmmo(ac_i) || ac_a != 0))
 									{
 										#if defined DEBUG
 											printf("[Nex-AC debug] AC weaponid: %d, AC ammo: %d, weaponid: %d, ammo: %d",
@@ -9569,7 +9583,7 @@ ac_fpublic ac_Timer(playerid)
 									else if(++ACInfo[playerid][acNOPCount][1] > AC_MAX_NOP_TIMER_WARNINGS) ACInfo[playerid][acGiveAmmo][ac_i] = -65535;
 								}
 							}
-							else if(ac_IsWeaponWithAmmo(ac_w))
+							else if(ac_IsWeaponSlotWithAmmo(ac_i))
 							{
 								if(ac_a == 0) ACInfo[playerid][acAmmo][ac_i] = 0;
 								else if(ACInfo[playerid][acACAllow][16] &&
@@ -10065,11 +10079,11 @@ static ac_IsValidDamageReason(weaponid) return (0 <= weaponid <= 18 || 22 <= wea
 
 static ac_IsValidWeapon(weaponid) return (0 <= weaponid <= 18 || 22 <= weaponid <= 46);
 
-static ac_IsWeaponWithAmmo(weaponid) return (16 <= weaponid <= 18 || weaponid != 40 && 22 <= weaponid <= 43);
+static ac_IsBulletWeapon(weaponid) return (weaponid == 38 || 22 <= weaponid <= 34);
+
+static ac_IsWeaponSlotWithAmmo(weaponslot) return (2 <= weaponslot <= 9);
 
 static ac_IsAmmoSharingInSlot(weaponslot) return (3 <= weaponslot <= 5);
-
-static ac_IsBulletWeapon(weaponid) return (weaponid == 38 || 22 <= weaponid <= 34);
 
 static ac_IsValidFloat(Float:value) return (value == value && value != Float:0x7F800000 && value != Float:0xFF800000);
 
@@ -10305,15 +10319,13 @@ static ac_IpToInt(const ip[])
 		sscanf(ip, "p<.>iiii", ac_b3, ac_b2, ac_b1, ac_b0);
 		return (ac_b0 | ac_b1 << 8 | ac_b2 << 16 | ac_b3 << 24);
 	#else
-		new ac_bytes[1], ac_pos;
-		ac_bytes{0} = strval(ip[ac_pos]);
+		new ac_bytes = strval(ip) << 24, ac_pos;
 		while(ac_pos < 15 && ip[ac_pos++] != '.'){}
-		ac_bytes{1} = strval(ip[ac_pos]);
+		ac_bytes += strval(ip[ac_pos]) << 16;
 		while(ac_pos < 15 && ip[ac_pos++] != '.'){}
-		ac_bytes{2} = strval(ip[ac_pos]);
+		ac_bytes += strval(ip[ac_pos]) << 8;
 		while(ac_pos < 15 && ip[ac_pos++] != '.'){}
-		ac_bytes{3} = strval(ip[ac_pos]);
-		return ac_bytes[0];
+		return ac_bytes + strval(ip[ac_pos]);
 	#endif
 }
 
