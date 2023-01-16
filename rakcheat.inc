@@ -9676,8 +9676,8 @@ ac_fpublic ac_Timer(playerid)
 						Float:ac_dist = GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acLastFivePosX], ACInfo[playerid][acLastFivePosY], ac_z),
 						Float:ac_dist_set = GetPlayerDistanceFromPoint(playerid, ACInfo[playerid][acSetPosX], ACInfo[playerid][acSetPosY], ac_z);
 						if((ac_time = (ac_gtc - ACInfo[playerid][acFiveSecTick]) / 5000.0) > 1.0) ac_maxdist *= ac_time;
-						if(ac_s != PLAYER_STATE_ONFOOT) ac_maxdist += floatround(ACVehInfo[ACInfo[playerid][acVeh]][acSpeed] / 5);
-						else if((ac_t = GetPlayerSurfingVehicleID(playerid)) != INVALID_VEHICLE_ID) ac_maxdist += floatround(ACVehInfo[ac_t][acSpeed] / 5);
+						if(ac_s != PLAYER_STATE_ONFOOT) ac_maxdist = ac_maxdist + floatround(ACVehInfo[ACInfo[playerid][acVeh]][acSpeed] / 5);
+						else if((ac_t = GetPlayerSurfingVehicleID(playerid)) != INVALID_VEHICLE_ID) ac_maxdist = ac_maxdist + floatround(ACVehInfo[ac_t][acSpeed] / 5);
 						if(ac_dist >= ac_maxdist && (ACInfo[playerid][acSet][7] == -1 || ac_dist_set >= ac_maxdist))
 						{
 							#undef AC_STREAM_DISTANCE
