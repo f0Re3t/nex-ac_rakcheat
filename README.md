@@ -1,41 +1,41 @@
 # Rakcheat anticheat
 
-Данный античит разработан на основе [Nex-AC](https://github.com/NexiusTailer/Nex-AC) и интегрирует в него проверки из [rakcheat](https://github.com/f0Re3t/rakcheat).  
-Все проверки и защиты из rakcheat были оптимизированы, а так же добавлены иные методы.  
+This anticheat is based on [Nex-AC](https://github.com/NexiusTailer/Nex-AC) and integrates checks from [rakcheat](https://github.com/f0Re3t/rakcheat).  
+All checks and protections from rakcheat have been optimized and additional methods have been added.  
 
-**Важно:** для использования требуется файл локализации (взять его можно из основного репозитория античита) и очень активно используется Pawn.RakNet новыми проверками, так что желательно иметь его в зависимостях.
+**Important:** to use this you need a localization file (which can be taken from the main anticheat repository), and Pawn.RakNet is heavily utilized by the new checks, so it is highly recommended to include it as a dependency.
 
-Ниже описаны основные различия с оригинальным Nex-AC.
+Below are the main differences from the original Nex-AC.
 
-## Внешние функции
+## External functions
 
-В OnCheatDetected был добавлен дополнительный параметр "code2", теперь он объявляется так:
+An additional parameter "code2" has been added to OnCheatDetected. It is now declared as follows:
 
 ```pawn
 forward OnCheatDetected(playerid, ip_address[], type, code, code2);
 ```
 
-Этот параметр идентичен таковому в OnCheatWarning и предназначен для понимания того, какая из проверок сработала внутри кода античита.
+This parameter is identical to the one in OnCheatWarning and is intended to help identify which specific check within the anticheat code was triggered.
 
-## Настройки по умолчанию
+## Default settings
 
-Отключена поддержка большинства механик одиночной игры, вывод статистики срабатываний при выключении сервера и чтение/запись внешнего конфиг файла. Также по умолчанию отключена поддержка NPC-ботов, но если вы используете их на своем сервере, то можете включить это (таким же образом, как и в стандартном античите):
+Support for most single-player mechanics has been disabled, as well as the output of statistics when the server is shut down and the reading/writing of an external configuration file. Additionally, support for NPC is disabled by default, but if you use them on your server, you can enable it (in the same way as in the base anticheat):
 
 ```pawn
 #define AC_USE_NPC true
 #include <rakcheat>
 ```
 
-Среди прочего:
-* Максимальное количество входящих игроков с одного IP адреса было повышено с 1 до 3.
-* Максимальное количество неудачных попыток входа в RCON было повышено с 1 до 3.
+Other changes include:
+* The maximum number of incoming players from a single IP address has been increased from 1 to 3.
+* The maximum number of failed RCON login attempts has been increased from 1 to 3.
 
-## Коды античитов
+## Anticheat codes
 
-Добавлен новый код 53 (Anti-Fast movement), остальные изменения и доработки были добавлены в существующие коды античитов. Все они имеют свой подкод (code2), по которому можно понять, что срабатала именно новая проверка из rakcheat, даже если она будет с тем же основным кодом, что был в базовом античите.
+A new code 53 (Anti-Fast movement) has been added. Other changes and improvements have been integrated into existing anticheat codes. All of them have a subcode (code2), which allows you to determine that a new check from rakcheat was triggered, even if it shares the same code as in the base anticheat.
 
-Если вы настраиваете античит из конфиг файла "nex-ac_settings.cfg", то рекомендуется удалить его из папки "scriptfiles" и сгенерировать новый, если предыдущий был сгенерирован оригинальным Nex-AC (в связи с изменением количества кодов античита).
+If you are configuring the anticheat using the "nex-ac_settings.cfg" file, it is recommended to delete it from the "scriptfiles" folder and generate a new one, if the previous one was created by the original Nex-AC (due to changes in the number of anticheat codes).
 
-Кому нужна более подробная техническая информация по поводу всех добавленных проверок и того, что они добавляют и как они работают - берите diff checker и сравнивайте с базовым античитом. Возможно, кому-то это будет полезно.
+For those who need more detailed technical information about all the added checks, what they add and how they work, use a diff checker to compare it with the base anticheat. I hope this might be useful for some.
 
-Тема на blasthack: https://www.blast.hk/threads/46756/
+Blasthack thread: https://www.blast.hk/threads/46756/
