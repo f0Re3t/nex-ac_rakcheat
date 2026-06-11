@@ -12,7 +12,7 @@ Below are the main differences from the original Nex-AC.
 An additional parameter "code2" has been added to OnCheatDetected. It is now declared as follows:
 
 ```pawn
-forward OnCheatDetected(playerid, ip_address[], type, code, code2);
+forward OnCheatDetected(playerid, const ip_address[], type, code, code2);
 ```
 
 This parameter is identical to the one in OnCheatWarning and is intended to help identify which specific check within the anticheat code was triggered.
