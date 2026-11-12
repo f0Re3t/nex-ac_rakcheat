@@ -9,7 +9,7 @@ Below are the main differences from the original Nex-AC.
 
 ## External functions
 
-An additional parameter "code2" has been added to OnCheatDetected. It is now declared as follows:
+An additional parameter `code2` has been added to OnCheatDetected. It is now declared as follows:
 
 ```pawn
 forward OnCheatDetected(playerid, const ip_address[], type, code, code2);
@@ -34,8 +34,8 @@ Other changes include:
 
 A new code 53 (Anti-Fast movement) has been added. Other changes and improvements have been integrated into existing anticheat codes. All of them have a subcode (code2), which allows you to determine that a new check from rakcheat was triggered, even if it shares the same code as in the base anticheat.
 
-If you are configuring the anticheat using the "nex-ac_settings.cfg" file, it is recommended to delete it from the "scriptfiles" folder and generate a new one, if the previous one was created by the original Nex-AC (due to changes in the number of anticheat codes).
+If you are configuring the anticheat using the `nex-ac_settings.cfg` file, it is recommended to delete it from the `scriptfiles` folder and generate a new one, if the previous one was created by the original Nex-AC (due to changes in the number of anticheat codes).
 
 For those who need more detailed technical information about all the added checks, what they add and how they work, use a diff checker to compare it with the base anticheat. I hope this might be useful for some.
 
-Blasthack thread: https://www.blast.hk/threads/46756/
+**Blasthack thread:** https://www.blast.hk/threads/46756/
